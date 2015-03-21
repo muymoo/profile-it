@@ -13,8 +13,8 @@ mongoose.connect('mongodb://localhost/my_database');
 // Depend on our runs controller
 var runs = require('./controllers/runs');
 
+// Basic setup
 var app = express();
-
 app.use(favicon('./public/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -23,6 +23,7 @@ app.use(cookieParser());
 
 // Server our static files (ng app)
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../bower_components')));
 
 // API routes 
 app.use('/runs', runs);

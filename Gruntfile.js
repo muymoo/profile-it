@@ -25,7 +25,7 @@ module.exports = function (grunt) {
           server: path.resolve('./server/index'),
           livereload: true,
           serverreload: true,
-          bases: path.resolve('./public')
+          bases: [path.resolve('./public'), path.resolve('./bower_components')]
         }
       }
     },
