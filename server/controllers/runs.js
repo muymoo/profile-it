@@ -6,6 +6,10 @@ var shell = require('shelljs');
 require('../models/run');
 var mongoose = require('mongoose');
 var model = mongoose.model('Run');
+var connection = mongoose.connection;
+connection.setProfiling(2, function (err, doc) {
+	console.log(err, doc);
+});
 
 // Get one run
 router.get('/recent', function(req, res, next) {
@@ -32,9 +36,43 @@ var runDbTests = function() {
     		if (err) return next(err);
 		}
 	);
+	model.create(
+		{ 
+			name: 'inserting2 ' + Date.now(), 
+			start: Date.now(), 
+			duration: 56 
+		}, 
+		function (err, doc) {
+    		if (err) return next(err);
+		}
+	);
+	model.create(
+		{ 
+			name: 'inserting3 ' + Date.now(), 
+			start: Date.now(), 
+			duration: 57 
+		}, 
+		function (err, doc) {
+    		if (err) return next(err);
+		}
+	);
+	model.create(
+		{ 
+			name: 'inserting4 ' + Date.now(), 
+			start: Date.now(), 
+			duration: 58 
+		}, 
+		function (err, doc) {
+    		if (err) return next(err);
+		}
+	);
 
 	model.findOne(function(err, run){
 		console.log(run);	
+	});
+
+	model.find(function(err, all){
+		console.log(all);	
 	});
 }
 
@@ -56,7 +94,7 @@ router.get('/profile', function(req, res, next) {
 				flamegraph: 'target/out.svg'
 			});
 		});
-	
+
 	setTimeout(runDbTests, 3000);
 
 	// Kill the dtrace
