@@ -2,9 +2,10 @@
 	<body ng-app="profilerApp">
 		<div ng-controller="ProfilerController">
 			<button ng-click="profile()">Run Profiler</button>
-			<p>Name: {{result.name}}</p>
-			<p>Start Time: {{result.start}}</p>
-			<p>Duration: {{result.duration}}s</p>
+			<p ng-if="result.name">Name: {{result.name}}</p>
+			<p ng-if="result.startTime">Start Time: {{result.startTime}}</p>
+			<p ng-if="result.duration">Duration: {{result.duration}}s</p>
+			<object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
 		</div>
 		<script src="bower_components/angular/angular.js"></script>
 		<script src="scripts/app.js"></script>

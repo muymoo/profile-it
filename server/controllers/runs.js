@@ -41,17 +41,20 @@ var runDbTests = function() {
 // TODO: GET THIS WORKING
 // Insert a run (i.e. profile)
 router.get('/profile', function(req, res, next) {
-	shell.exec('mkdir target');
+	shell.exec('mkdir public/target');
 	// run profiler
-	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-99 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o ./target/out.stacks', 
+	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-99 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o public/target/out.stacks', 
 		{async:true},
 		function(code, output){
 			console.log('DONE!');
-			console.log(code);
-			shell.exec('mkdir ')
-			shell.exec('./server/tools/stackcollapse.pl ./target/out.stacks > ./target/out.folded');
-			shell.exec('./server/tools/flamegraph.pl ./target/out.folded > ./target/out.svg');
-			// TODO: Serve svg? res.send(svg)
+			shell.exec('./server/tools/stackcollapse.pl public/target/out.stacks > public/target/out.folded');
+			shell.exec('./server/tools/flamegraph.pl public/target/out.folded > public/target/out.svg');
+			res.send({
+				name: '12345',
+				startTime: 'abc',
+				duration: 'sometime',
+				flamegraph: 'target/out.svg'
+			});
 		});
 	
 	setTimeout(runDbTests, 3000);
