@@ -1,13 +1,23 @@
 <html>
-	<body ng-app="profilerApp">
+	<head lang="en">
+        <meta charset="utf-8">
+        <title>Profile-It</title>  
+        <link rel="stylesheet" type="text/css" href="bower_components/ng-grid/ng-grid.css" />
+        <link rel="stylesheet" type="text/css" href="stylesheets/app.css" />
+    </head>
+	<body ng-app="profilerApp">	
 		<div ng-controller="ProfilerController">
+			<div class="gridStyle" ng-grid="myOptions"></div>
 			<button ng-click="profile()">Run Profiler</button>
 			<p ng-if="result.name">Name: {{result.name}}</p>
 			<p ng-if="result.startTime">Start Time: {{result.startTime}}</p>
 			<p ng-if="result.duration">Duration: {{result.duration}}s</p>
 			<object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
 		</div>
+
 		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/jquery/dist/jquery.js"></script>
+		<script src="bower_components/ng-grid/ng-grid-2.0.14.debug.js"></script>
 		<script src="scripts/app.js"></script>
 	</body>
 </html>

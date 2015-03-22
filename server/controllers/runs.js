@@ -74,6 +74,7 @@ var runDbTests = function() {
 	model.find(function(err, all){
 		console.log(all);	
 	});
+
 }
 
 // TODO: GET THIS WORKING

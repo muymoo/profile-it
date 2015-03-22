@@ -12,6 +12,7 @@ mongoose.connect('mongodb://localhost/my_database');
 
 // Depend on our runs controller
 var runs = require('./controllers/runs');
+var allops = require('./controllers/alloperations');
 
 // Basic setup
 var app = express();
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, '../bower_components')));
 
 // API routes 
 app.use('/runs', runs);
+app.use('/all', allops);
 // TODO: /profile, /results, /dashboard, etc.
 
 // catch 404 and forward to error handler
