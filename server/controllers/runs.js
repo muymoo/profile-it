@@ -85,9 +85,10 @@ router.get('/profile', function(req, res, next) {
 	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-99 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o public/target/out.stacks', 
 		{async:true},
 		function(code, output){
-			console.log('DONE!');
+			console.log('Completed profiling. Processing results...');
 			shell.exec('./server/tools/stackcollapse.pl public/target/out.stacks > public/target/out.folded');
 			shell.exec('./server/tools/flamegraph.pl public/target/out.folded > public/target/out.svg');
+			console.log('Completed processing results. Created SVG.');
 			res.send({
 				name: '12345',
 				startTime: 'abc',
