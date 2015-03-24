@@ -1,6 +1,6 @@
 'use strict';
 
-var profilerApp = angular.module('profilerApp',['ngGrid']);
+var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap']);
 
 profilerApp.controller('ProfilerController', ['$scope', '$http', function($scope, $http){
 	$scope.profile = function() {
