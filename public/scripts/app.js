@@ -1,6 +1,20 @@
 'use strict';
 
-var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap']);
+var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap', 'ui.router']);
+
+profilerApp.config(function($stateProvider, $urlRouterProvider) {
+  $stateProvider
+    .state('overview', {
+      url: "/",
+      templateUrl: "views/overview.html"
+    })
+    .state('reports', {
+      url: "/reports",
+      templateUrl: "views/reports.html"
+    });
+
+    $urlRouterProvider.otherwise("/");
+});
 
 profilerApp.controller('ProfilerController', ['$scope', '$http', function($scope, $http){
 	$scope.profile = function() {

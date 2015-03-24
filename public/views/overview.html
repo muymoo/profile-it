@@ -1,0 +1,95 @@
+<h1 class="page-header">Dashboard</h1>
+
+<div class="row">
+	<div class="col-lg-6" ng-controller="ProfilerController">
+		<div class="gridStyle" ng-grid="myOptions"></div>
+		<button class="" ng-click="profile()">Run Profiler</button>
+		<div class="col-sm-4"><progressbar class="progress-striped active" max="200" value="166" type="danger"><i>166 / 200</i></progressbar></div>
+		<p ng-if="result.name">Name: {{result.name}}</p>
+		<p ng-if="result.startTime">Start Time: {{result.startTime}}</p>
+		<p ng-if="result.duration">Duration: {{result.duration}}s</p>
+		<object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
+	</div>
+</div>
+<div class="row placeholders">
+	<div class="col-xs-6 col-sm-3 placeholder">
+			<img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+			<h4>Label</h4>
+			<span class="text-muted">Something else</span>
+	</div>
+	<div class="col-xs-6 col-sm-3 placeholder">
+			<img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+			<h4>Label</h4>
+			<span class="text-muted">Something else</span>
+	</div>
+	<div class="col-xs-6 col-sm-3 placeholder">
+			<img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+			<h4>Label</h4>
+			<span class="text-muted">Something else</span>
+	</div>
+	<div class="col-xs-6 col-sm-3 placeholder">
+			<img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+		    <h4>Label</h4>
+			<span class="text-muted">Something else</span>
+	</div>
+</div>
+
+<h2 class="sub-header">Section title</h2>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+  					<th>#</th>
+					<th>Header</th>
+					<th>Header</th>
+					<th>Header</th>
+					<th>Header</th>
+                </tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1,001</td>
+					<td>Lorem</td>
+					<td>ipsum</td>
+					<td>dolor</td>
+  					<td>sit</td>
+				</tr>
+				<tr>
+				  <td>1,011</td>
+				  <td>eget</td>
+				  <td>nulla</td>
+				  <td>Class</td>
+				  <td>aptent</td>
+				</tr>
+				<tr>
+				  <td>1,012</td>
+				  <td>taciti</td>
+				  <td>sociosqu</td>
+				  <td>ad</td>
+				  <td>litora</td>
+				</tr>
+				<tr>
+				  <td>1,013</td>
+				  <td>torquent</td>
+				  <td>per</td>
+				  <td>conubia</td>
+				  <td>nostra</td>
+				</tr>
+				<tr>
+				  <td>1,014</td>
+				  <td>per</td>
+				  <td>inceptos</td>
+				  <td>himenaeos</td>
+				  <td>Curabitur</td>
+				</tr>
+				<tr>
+				  <td>1,015</td>
+				  <td>sodales</td>
+				  <td>ligula</td>
+				  <td>in</td>
+				  <td>libero</td>
+				</tr>			
+			</tbody>
+		</table>
+	</div>
+</div>
