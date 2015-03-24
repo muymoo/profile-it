@@ -2,7 +2,6 @@
 
 <div class="row">
 	<div class="col-lg-6" ng-controller="ProfilerController">
-		<div class="gridStyle" ng-grid="myOptions"></div>
 		<button class="" ng-click="profile()">Run Profiler</button>
 		<div class="col-sm-4"><progressbar class="progress-striped active" max="200" value="166" type="danger"><i>166 / 200</i></progressbar></div>
 		<p ng-if="result.name">Name: {{result.name}}</p>
