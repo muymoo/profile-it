@@ -82,12 +82,12 @@ var runDbTests = function() {
 router.get('/profile', function(req, res, next) {
 	shell.exec('mkdir public/target');
 	// run profiler
-	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-99 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o public/target/out.stacks', 
+	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-1999 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o tools/out.stacks',
 		{async:true},
 		function(code, output){
 			console.log('Completed profiling. Processing results...');
-			shell.exec('./server/tools/stackcollapse.pl public/target/out.stacks > public/target/out.folded');
-			shell.exec('./server/tools/flamegraph.pl public/target/out.folded > public/target/out.svg');
+            shell.cd('./tools');
+			shell.echo(shell.exec('./stackcollapse.pl out.stacks | ./flamegraph.pl').output).to('../public/target/out.svg');
 			console.log('Completed processing results. Created SVG.');
 			res.send({
 				name: '12345',
@@ -97,10 +97,10 @@ router.get('/profile', function(req, res, next) {
 			});
 		});
 
-	setTimeout(runDbTests, 3000);
+	setTimeout(runDbTests, 5000);
 
 	// Kill the dtrace
-	setTimeout(killProcess.bind(null, dtrace.pid), 5000);
+	setTimeout(killProcess.bind(null, dtrace.pid), 10000);
 });
 
 module.exports = router;
