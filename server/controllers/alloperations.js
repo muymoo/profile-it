@@ -30,24 +30,25 @@ router.get('/lastDay', function(req, res, next) {
 //                              }
 //                        }
 //                       ).sort( { millis : -1 } )
+// see how to make monggo queries here: http://mongoosejs.com/docs/queries.html
+// and https://github.com/aheckmann/mquery#equals
+
+var today = new Date();
+var yesterday = new Date();
+yesterday.setDate(today.getDate() - 1);
+console.log(today);
+console.log(yesterday);
+
 SystemProfile()
     .find()
-      // ts: {
-      //   //'$gt' : new Date('2012-03-20T16:00:00.000Z')//,//1234, //new ISODate("2012-12-09T03:00:00Z")
-      //   '$lt' : new Date('2015-03-25T16:00:00.000Z')//5678//new ISODate("2012-12-09T03:40:00Z")
-      // }
-      // op:{
-      //   '$ne' : 'command'
-      // }
-    // }, function(err) {
-    //   console.log("ERRRRR",err);
-    // })
-    .where('ts')
-    .gt(new Date('2015-03-24T07:06:00.000Z')) // TODO this isn't working :( :(
-    .lt(new Date('2015-03-24T07:08:00.000Z'))
-    // .where('op')
-    // .ne('command')
-    .sort( { ts : -1 } )
+    .where('ts') // time range
+    .gt(yesterday)
+    .lt(today)
+    //.where('op') // can ignore certain types of operations 
+    //.ne('command')
+    .where('ns')
+    .equals('my_database.testData') // limit to only certain collections (dbname.collection) - exclude my_database.system.profile
+    .sort( { ts : -1 } ) // descending time
     .exec(function(err, result) {
       res.send(result);
     });
