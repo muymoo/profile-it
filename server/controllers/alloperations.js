@@ -30,7 +30,6 @@ router.get('/lastDay', function(req, res, next) {
 //                              }
 //                        }
 //                       ).sort( { millis : -1 } )
-console.log("IN");
 SystemProfile()
     .find()
       // ts: {
@@ -44,13 +43,12 @@ SystemProfile()
     //   console.log("ERRRRR",err);
     // })
     .where('ts')
-    .gt(new Date('2015-03-24T16:07:00.000Z')) // TODO this isn't working :( :(
-    .lt(new Date('2015-03-24T16:07:10.000Z'))
+    .gt(new Date('2015-03-24T07:06:00.000Z')) // TODO this isn't working :( :(
+    .lt(new Date('2015-03-24T07:08:00.000Z'))
     // .where('op')
     // .ne('command')
     .sort( { ts : -1 } )
     .exec(function(err, result) {
-      console.log("RESULT:", result);
       res.send(result);
     });
 });
