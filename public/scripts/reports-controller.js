@@ -1,47 +1,62 @@
 profilerApp.controller('ReportsController', ['$scope', '$http', function($scope, $http){
 	
-	$scope.aggData = [];
-	$scope.agg = { data: 'aggData' };
-	$http.get('/all/aggLastDay').success(function(lastDay) {
-		console.log(lastDay);
-		for(var idx in lastDay) {
-			var one = lastDay[idx];
-			$scope.aggData.push(
+	$scope.operationsCollectionsData = [];
+	$scope.operationsCollections = { data: 'operationsCollectionsData' };
+	$http.get('/all/operationscollections').success(function(result) {
+		console.log(result);
+		for(var index in result) {
+			var item = result[index];
+			$scope.operationsCollectionsData.push(
 				{
-					op: one.op,
-					query: one.query,
-					lockStats: one.lockStats,
-					nscannedObjects: one.nscannedObjects,
-					responseLength: one.responseLength,
-					timestamp: one.ts,
-					ns: one.ns,
-					millis: one.millis
+					'Namespace': item._id.ns,
+					'Operation': item._id.op,
+					'Avg Millis': item.avgMillis,
+					'Max Millis': item.maxMillis,
+					'Min Millis': item.minMillis,
+					'Count': item.count
 				}
 			);
 		}
 	});
 
-	// $scope.lastDayData = [];
-	// $scope.lastDay = { data: 'lastDayData' };
-	// $http.get('/all/lastDay').success(function(lastDay) {
-	// 	for(var idx in lastDay) {
-	// 		var one = lastDay[idx];
-	// 		$scope.lastDayData.push(
-	// 			{
-	// 				op: one.op,
-	// 				query: one.query,
-	// 				command: one.command,
-	// 				// lockStats: one.lockStats,
-	// 				// nscannedObjects: one.nscannedObjects,
-	// 				// responseLength: one.responseLength,
-	// 				timestamp: one.ts,
-	// 				ns: one.ns,
-	// 				millis: one.millis
-	// 			}
-	// 		);
-	// 		console.log(one);
-	// 	}
-	// });
+	$scope.longestQueriesData = [];
+	$scope.longestQueries = { data: 'longestQueriesData' };
+	$http.get('/all/longestqueries').success(function(result) {
+		console.log(result);
+		for(var index in result) {
+			var item = result[index];
+			$scope.longestQueriesData.push(
+				{
+					'Namespace': item._id.ns,
+					'Query': item._id.query,
+					'Avg Millis': item.avgMillis,
+					'Count': item.count
+				}
+			);
+		}
+	});
+
+	$scope.lastDayData = [];
+	$scope.lastDay = { data: 'lastDayData' };
+	$http.get('/all/lastDay').success(function(result) {
+		console.log(result);
+		for(var index in result) {
+			var item = result[index];
+			$scope.lastDayData.push(
+				{
+					op: item.op,
+					query: item.query,
+					command: item.command,
+					// lockStats: item.lockStats,
+					// nscannedObjects: item.nscannedObjects,
+					// responseLength: item.responseLength,
+					timestamp: item.ts,
+					ns: item.ns,
+					millis: item.millis
+				}
+			);
+		}
+	});
 
 }]);
 
