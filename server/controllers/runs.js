@@ -8,19 +8,19 @@ var mongoose = require('mongoose');
 var model = mongoose.model('Run');
 var connection = mongoose.connection;
 connection.setProfiling(2, function (err, doc) {
-	console.log(err, doc);
+    console.error(err, doc);
 });
 
 // Get one run
 router.get('/recent', function(req, res, next) {
-	console.log(model);
+    console.info(model);
 	model.findOne(function(err, run){
 		res.send('Last profiler run: ' + run.name);	
 	});
 });
 
 var killProcess = function(pid){
-	console.log('Killing: ' + pid);
+    console.info('Killing:', pid);
 	shell.exec('kill ' + pid);
 }
 
@@ -68,38 +68,50 @@ var runDbTests = function() {
 	);
 
 	model.findOne(function(err, run){
-		console.log(run);	
+        console.info(run);
 	});
 
 	model.find(function(err, all){
-		console.log(all);	
+        console.info(all);
 	});
 
 }
 
-// TODO: GET THIS WORKING
-// Insert a run (i.e. profile)
+var createSvg = function(stacksFileName, svgFileName) {
+    console.info('Completed profiling. Processing results...');
+    shell.cd('./tools');
+    shell.echo(shell.exec('./stackcollapse.pl ' + stacksFileName +' | ./flamegraph.pl --width=1000').output).to('../public/target/' + svgFileName);
+    console.info('Completed processing results. Created SVG.');
+};
+
+// Profile the database and return a flamegraph
 router.get('/profile', function(req, res, next) {
 	shell.exec('mkdir public/target');
-	// run profiler
-	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-1999 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o tools/out.stacks',
+    var startTime = Date.now();
+    var stacksFile = startTime + '.stacks';
+    var svg = startTime + '.svg';
+
+	// Run dtrace profiler on mongod process
+	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-1999 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o tools/' + stacksFile,
 		{async:true},
-		function(code, output){
-			console.log('Completed profiling. Processing results...');
-            shell.cd('./tools');
-			shell.echo(shell.exec('./stackcollapse.pl out.stacks | ./flamegraph.pl').output).to('../public/target/out.svg');
-			console.log('Completed processing results. Created SVG.');
+		function(){
+            // Once it's done, take the results and create an svg.
+            createSvg(stacksFile, svg);
+            var endTime = Date.now();
+
+            // Send back the response with the location of the svg and some metadata
 			res.send({
 				name: '12345',
-				startTime: 'abc',
-				duration: 'sometime',
-				flamegraph: 'target/out.svg'
+				startTime: startTime,
+				duration: (endTime - startTime)/1000,
+				flamegraph: 'target/' + svg
 			});
 		});
 
+    // Wait for the dtrace to warm up and then run some queries on the db to profile
 	setTimeout(runDbTests, 5000);
 
-	// Kill the dtrace
+	// Kill the dtrace because it doesn't stop on its own
 	setTimeout(killProcess.bind(null, dtrace.pid), 10000);
 });
 
