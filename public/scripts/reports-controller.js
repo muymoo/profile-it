@@ -1,5 +1,7 @@
 profilerApp.controller('ReportsController', ['$scope', '$http', function($scope, $http){
 	
+
+	
 	// $scope.last25Data = [];
 	// $scope.last25 = { data: 'last25Data' };
 	// $http.get('/all/last25').success(function(last25) {
@@ -31,9 +33,9 @@ profilerApp.controller('ReportsController', ['$scope', '$http', function($scope,
 					op: one.op,
 					query: one.query,
 					command: one.command,
-					lockStats: one.lockStats,
-					nscannedObjects: one.nscannedObjects,
-					responseLength: one.responseLength,
+					// lockStats: one.lockStats,
+					// nscannedObjects: one.nscannedObjects,
+					// responseLength: one.responseLength,
 					timestamp: one.ts,
 					ns: one.ns,
 					millis: one.millis
