@@ -79,14 +79,19 @@ var runDbTests = function() {
 
 var createSvg = function(stacksFileName, svgFileName) {
     console.info('Completed profiling. Processing results...');
+    
     shell.cd('./tools');
     shell.echo(shell.exec('./stackcollapse.pl ' + stacksFileName +' | ./flamegraph.pl --width=1000').output).to('../public/target/' + svgFileName);
+    shell.cd('..');
+
+    // Cache a copy for later use
+    shell.cat('public/target/' + svgFileName).to('public/target/last.svg');
     console.info('Completed processing results. Created SVG.');
 };
 
 // Profile the database and return a flamegraph
 router.get('/profile', function(req, res, next) {
-	shell.exec('mkdir public/target');
+	shell.mkdir('public/target');
     var startTime = Date.now();
     var stacksFile = startTime + '.stacks';
     var svg = startTime + '.svg';
@@ -95,7 +100,8 @@ router.get('/profile', function(req, res, next) {
 	var dtrace = shell.exec('dtrace -x ustackframes=100 -n \'profile-1999 /execname == "mongod" && arg1/ { @[ustack()] = count(); } tick-60s { exit(0); }\' -o tools/' + stacksFile,
 		{async:true},
 		function(){
-            // Once it's done, take the results and create an svg.
+
+            // Once it's done running the profiler, take the results and create an svg.
             createSvg(stacksFile, svg);
             var endTime = Date.now();
 

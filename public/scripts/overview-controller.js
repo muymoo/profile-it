@@ -1,7 +1,7 @@
 profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout){
     $scope.progress = {};
     $scope.result = {
-        flamegraph: null
+        flamegraph: 'target/last.svg'
     };
     $scope.progress.value = 0;
 
