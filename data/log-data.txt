@@ -1,0 +1,53 @@
+/**
+ * Generate log file 'actual usage' data to experiment with
+ * put all of this in your .mongorc.js file 
+ * and run addEvents(500) // or whatever number
+ */
+
+//http://docs.mongodb.org/manual/tutorial/generate-test-data/
+//http://docs.mongodb.org/ecosystem/use-cases/storing-log-data/
+
+var paths = [
+	'/index.js',
+	'/page1.js',
+	'/last.svg',
+	'/scripts/overview-controller.js',
+	'/apache_pb.gif'
+];
+
+var hosts = [
+	'3.19.34.234',
+	'3.20.34.123',
+	'3.32.34.456',
+	'3.23.34.889'
+];
+
+function getThing(list) {
+    var index = Math.round(Math.random() * (list.length - 1));
+    return list[index];
+}
+
+var databaseName = 'my_database';
+var collectionName = 'events';
+
+// put this function in your .mongorc.js file 
+function addEvents(num) {
+
+  var collection = db.getSiblingDB(databaseName).getCollection(collectionName);
+
+  for (i = 0; i < num; i++) {
+
+	var event = {
+	    host: "127.0.0.1",
+	    time: new Date().getTime(),
+	    path: getThing(paths),
+	    referer: "[http://www.example.com/start.html](http://www.example.com/start.html)",
+	    user_agent: "Mozilla/4.08 [en] (Win98; I ;Nav)"
+	};
+
+    collection.insert(event, w=1);
+  }
+
+  print(collection.count());
+
+}
