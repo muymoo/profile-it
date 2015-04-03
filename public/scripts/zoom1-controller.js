@@ -20,19 +20,3 @@ profilerApp.controller('Zoom1Controller', ['$scope', '$http', function($scope, $
 		}
 	});
 }]);
-
-/*
-all available things in system.profile 
-http://docs.mongodb.org/manual/reference/database-profiler/#output-reference
-
-potentially interesting:
-op, ns, query (.$query, orderby, etc. for query ops), ntoreturn, nscanned, scanAndOrder, moved, nmoved, nupdated, 
-keyUpdates, lockStats, nreturned, responseLength, millis
-
-maybe?
-command, updateobj, ntoskip
-
-probably not:
-ts, cursorid, client, user
-
-*/

@@ -23,6 +23,11 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       url: "/zoom1",
       templateUrl: "views/zoom1.html",
       controller: "Zoom1Controller"
+    })
+    .state('zoom2', {
+      url: "/zoom2",
+      templateUrl: "views/zoom2.html",
+      controller: "Zoom2Controller"
     });
 
     $urlRouterProvider.otherwise("/");

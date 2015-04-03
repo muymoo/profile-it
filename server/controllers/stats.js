@@ -91,4 +91,18 @@ router.get('/collection/:collection_id/operation', function(req, res, next) {
 
 });
 
+
+router.get('/collection/:collection_id/operation/:operation_id', function(req, res, next) {
+
+  systemProfile
+      .find()
+      .where('ns')
+      .equals(req.params.collection_id)
+      // .where('query')
+      // TODO - want to filter to specific type of query/update/etc. here... how?
+      .exec(function(err, result) {
+        res.send(result);
+      });
+});
+
 module.exports = router;
