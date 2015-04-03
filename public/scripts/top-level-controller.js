@@ -1,6 +1,6 @@
-profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope, $http){
+profilerApp.controller('TopLevelController', ['$scope', 'StatsService', function($scope, StatsService){
 
-	$http.get('/stats/collection').success(function(result) {
+	StatsService.getCollections().then(function(result) {
 		var categories = [];
 		var series = [{
 			name: 'Max Millis',
@@ -29,7 +29,7 @@ profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope
 		}
 	});
 
-	$http.get('/stats/collectionoperation').success(function(result) {
+	StatsService.getCollectionsOperations().then(function(result) {
 		var categories = [];
 		var series = [{
 			name: 'Max Millis',

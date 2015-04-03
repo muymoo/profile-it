@@ -1,6 +1,7 @@
 profilerApp.directive('chart', function() {
 	return {
 		restrict: 'E',
+		replace: true,
 		template: '<div style="width:100%;"></div>',
 		scope: {
 			title: '@',
