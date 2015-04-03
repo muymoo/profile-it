@@ -5,6 +5,7 @@ profilerApp.directive('chart', function() {
 		template: '<div style="width:100%;"></div>',
 		scope: {
 			title: '@',
+			subtitle: '@?',
 			yAxisTitle: '@',
 			seriesAndCategories: '='
 		},
@@ -19,9 +20,15 @@ profilerApp.directive('chart', function() {
 		        title: {
 		            text: scope.title
 		        },
+		        subtitle: {
+		        	text: scope.subtitle
+		        },
 		        xAxis: {
 		            categories: scope.categories,
-		            min: 0
+		            min: 0,
+		            labels: {
+			            enabled: false
+					}
 		        },
 		        yAxis: {
 		            title: {
@@ -31,6 +38,11 @@ profilerApp.directive('chart', function() {
 		        series: scope.series,
 		        credits: {
 	      			enabled: false
+	  			},
+	  			legend: {
+	  				align: 'right',
+	  				verticalAlign: 'middle',
+            		layout: 'vertical',
 	  			}
 		    };
 

@@ -78,6 +78,14 @@ router.get('/collection/:collection_id/operation', function(req, res, next) {
             minMillis: { $min: "$millis" },
             count: { $sum: 1 },
           }
+        },
+        {
+          $sort: {
+            avgMillis: -1
+          }
+        },
+        {
+          $limit: 50
         }
       ]
     )
