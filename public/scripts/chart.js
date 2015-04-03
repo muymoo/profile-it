@@ -39,8 +39,6 @@ profilerApp.directive('chart', function() {
 		    scope.$watch('seriesAndCategories', function(newData) {
 
 		    	if(newData) {
-			    	console.log(newData);
-
 			    	scope.chart.xAxis[0].setCategories(newData.categories, false);
 			    	for(var idx in newData.series) {
 			    		scope.chart.addSeries(newData.series[idx]);

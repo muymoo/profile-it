@@ -1,8 +1,8 @@
-profilerApp.controller('Zoom1Controller', ['$scope', '$http', function($scope, $http){
+profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', function($scope, StatsService){
 	
 	$scope.timeEachOperationData = [];
 	$scope.timeEachOperation = { data: 'timeEachOperationData' };
-	$http.get('/stats/collection/my_database.events/operation').success(function(result) {
+	StatsService.getOperations('my_database.events').then(function(result) {
 		console.log(result);
 		for(var index in result) {
 			var item = result[index];
@@ -17,6 +17,35 @@ profilerApp.controller('Zoom1Controller', ['$scope', '$http', function($scope, $
 					'Count': item.count
 				}
 			);
+		}
+	});
+
+	StatsService.getOperations('my_database.events').then(function(result) {
+		var categories = [];
+		var series = [{
+			name: 'Max Millis',
+			data: []
+		},{
+			name: 'Avg Millis',
+			data: []
+		},{
+			name: 'Min Millis',
+			data: []
+		}];
+
+		for(var index in result) {
+			var item = result[index];
+
+			categories.push(item._id.op + ' ' + item._id.query + ' ' + item._id.updateobj);
+			series[0].data.push(item.maxMillis);
+			series[1].data.push(item.avgMillis);
+			series[2].data.push(item.minMillis);
+			// TODO? also have available 'Count': item.count
+		}
+
+		$scope.timeEachOperation = {
+			series: series,
+			categories: categories
 		}
 	});
 }]);

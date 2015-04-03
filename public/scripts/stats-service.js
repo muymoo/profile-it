@@ -16,9 +16,18 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return deferred.promise;
 	};
 
+	var getOperations = function(collection) {
+		var deferred = $q.defer();
+		$http.get('/stats/collection/' + collection + '/operation').success(function(result) {
+			deferred.resolve(result);
+		});
+		return deferred.promise;
+	};
+
 	return {
 		getCollections: getCollections,
-		getCollectionsOperations: getCollectionsOperations
+		getCollectionsOperations: getCollectionsOperations,
+		getOperations: getOperations
 	};
 
 });

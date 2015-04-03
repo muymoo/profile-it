@@ -1,4 +1,10 @@
 <div class="row">
-	<h3>Time for each specific operation</h3>
 	<div class="gridStyle" ng-grid="timeEachOperation"></div>
+	<div class="col-sm-12">
+		<chart 
+			title="Time each operation" 
+			y-axis-title="Time (ms)" 
+			series-and-categories="timeEachOperation">
+		</chart>
+	</div>
 </div>
