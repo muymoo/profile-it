@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 mongoose.set('debug', true)
 var systemProfile = mongoose.model('SystemProfile');
 
-router.get('/collections', function(req, res, next) {
+router.get('/collection', function(req, res, next) {
 
   systemProfile
     .aggregate(
@@ -32,7 +32,7 @@ router.get('/collections', function(req, res, next) {
 
 });
 
-router.get('/operations', function(req, res, next) {
+router.get('/collectionoperation', function(req, res, next) {
 
   systemProfile
     .aggregate(
@@ -40,6 +40,39 @@ router.get('/operations', function(req, res, next) {
         {
           $group: {
             _id: {'ns':'$ns', 'op':'$op'},
+            maxMillis: { $max: '$millis' },
+            avgMillis: { $avg: "$millis" },
+            minMillis: { $min: "$millis" },
+            count: { $sum: 1 },
+          }
+        }
+      ]
+    )
+    .exec(function(err, result) {
+      console.log('IN');
+      if (err) {
+        console.log('ERROR',err);
+      }
+      res.send(result);
+    });
+
+});
+
+router.get('/collection/:collection_id/operation', function(req, res, next) {
+
+  systemProfile
+    .aggregate(
+      [
+      { 
+          $match: { 
+            ns: { 
+              $eq: req.params.collection_id
+            }
+          }
+        },
+        {
+          $group: {
+            _id: {'op':'$op', 'query':'$query', 'updateobj':'$updateobj'},
             maxMillis: { $max: '$millis' },
             avgMillis: { $avg: "$millis" },
             minMillis: { $min: "$millis" },

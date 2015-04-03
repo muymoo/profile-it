@@ -2,7 +2,7 @@ profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope
 	
 	$scope.timeEachCollectionData = [];
 	$scope.timeEachCollection = { data: 'timeEachCollectionData' };
-	$http.get('/stats/collections').success(function(result) {
+	$http.get('/stats/collection').success(function(result) {
 		console.log(result);
 		for(var index in result) {
 			var item = result[index];
@@ -20,7 +20,7 @@ profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope
 
 	$scope.timeEachCollectionPerOperationData = [];
 	$scope.timeEachCollectionPerOperation = { data: 'timeEachCollectionPerOperationData' };
-	$http.get('/stats/operations').success(function(result) {
+	$http.get('/stats/collectionoperation').success(function(result) {
 		console.log(result);
 		for(var index in result) {
 			var item = result[index];
