@@ -1,4 +1,4 @@
-profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout){
+profilerApp.controller('Zoom3Controller', ['$scope', '$http', '$timeout', function($scope, $http, $timeout){
     $scope.progress = {};
     $scope.result = {
         flamegraph: 'target/last.svg'

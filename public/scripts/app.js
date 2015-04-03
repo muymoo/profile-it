@@ -4,16 +4,6 @@ var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap', 'ui.ro
 
 profilerApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-    // .state('overview', {
-    //   url: "/",
-    //   templateUrl: "views/overview.html",
-    //   controller: "ProfilerController"
-    // })
-    // .state('reports', {
-    //   url: "/reports",
-    //   templateUrl: "views/reports.html",
-    //   controller: "ReportsController"
-    // });
     .state('toplevel', {
       url: "/",
       templateUrl: "views/top-level.html",
@@ -28,6 +18,11 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       url: "/zoom2",
       templateUrl: "views/zoom2.html",
       controller: "Zoom2Controller"
+    })
+    .state('zoom3', {
+      url: "/zoom3",
+      templateUrl: "views/zoom3.html",
+      controller: "Zoom3Controller"
     });
 
     $urlRouterProvider.otherwise("/");

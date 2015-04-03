@@ -1,0 +1,18 @@
+<h1 class="page-header">Rerun Similar Query</h1>
+<p>Click the profile button to "rerun that query" (that aspect not working yet) and analyze it at a very low level</p>
+
+<div class="row">
+    <div class="col-lg-6" ng-controller="Zoom3Controller">
+        <h2 class="sub-header">Profiler
+            <button class="btn btn-sm btn-primary" type="button" ng-click="profile()">Run Profiler</button>
+        </h2>
+        <div class="col-lg-6">
+            <progressbar ng-class="progress.value !== 100 ? 'progress-striped active': ''" max="100"
+                         value="progress.value"
+                         type="success"><i><span
+                    ng-hide="progress.value < 5">{{progress.state}}</span></bar></i>
+            </progressbar>
+            </div>
+        <object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
+    </div>
+</div>
