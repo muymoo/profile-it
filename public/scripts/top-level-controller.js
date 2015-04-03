@@ -1,41 +1,99 @@
 profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope, $http){
-	
-	$scope.timeEachCollectionData = [];
-	$scope.timeEachCollection = { data: 'timeEachCollectionData' };
+
 	$http.get('/stats/collection').success(function(result) {
-		console.log(result);
+		var categories = [];
+		var series = [{
+			name: 'Max Millis',
+			data: []
+		},{
+			name: 'Avg Millis',
+			data: []
+		},{
+			name: 'Min Millis',
+			data: []
+		}];
+
 		for(var index in result) {
 			var item = result[index];
-			$scope.timeEachCollectionData.push(
-				{
-					'Collection': item._id.ns,
-					'Avg Millis': item.avgMillis,
-					'Max Millis': item.maxMillis,
-					'Min Millis': item.minMillis,
-					'Count': item.count
-				}
-			);
+
+			categories.push(item._id.ns);
+			series[0].data.push(item.maxMillis);
+			series[1].data.push(item.avgMillis);
+			series[2].data.push(item.minMillis);
+			// TODO? also have available 'Count': item.count
 		}
+
+		angular.element('#timeEachCollection').highcharts({
+	        chart: {
+	            type: 'column',
+	            zoomType: 'xy'
+	        },
+	        title: {
+	            text: 'Time in each collection'
+	        },
+	        xAxis: {
+	            categories: categories,
+	            min: 0
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Time (ms)'
+	            }
+	        },
+	        series: series,
+	        credits: {
+      			enabled: false
+  			}
+	    });
 	});
 
-	$scope.timeEachCollectionPerOperationData = [];
-	$scope.timeEachCollectionPerOperation = { data: 'timeEachCollectionPerOperationData' };
 	$http.get('/stats/collectionoperation').success(function(result) {
-		console.log(result);
+		var categories = [];
+		var series = [{
+			name: 'Max Millis',
+			data: []
+		},{
+			name: 'Avg Millis',
+			data: []
+		},{
+			name: 'Min Millis',
+			data: []
+		}];
+
 		for(var index in result) {
 			var item = result[index];
-			$scope.timeEachCollectionPerOperationData.push(
-				{
-					'Collection': item._id.ns,
-					'Operation': item._id.op,
-					'Avg Millis': item.avgMillis,
-					'Max Millis': item.maxMillis,
-					'Min Millis': item.minMillis,
-					'Count': item.count
-				}
-			);
+
+			categories.push(item._id.ns + ' ' + item._id.op);
+			series[0].data.push(item.maxMillis);
+			series[1].data.push(item.avgMillis);
+			series[2].data.push(item.minMillis);
+			// TODO? also have available 'Count': item.count
 		}
+
+		angular.element('#timeEachCollectionPerOperation').highcharts({
+	        chart: {
+	            type: 'column',
+	            zoomType: 'xy'
+	        },
+	        title: {
+	            text: 'Time in each collection per operation'
+	        },
+	        xAxis: {
+	            categories: categories,
+	            min: 0
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Time (ms)'
+	            }
+	        },
+	        series: series,
+	        credits: {
+      			enabled: false
+  			}
+	    });
 	});
+
 }]);
 
 /*
