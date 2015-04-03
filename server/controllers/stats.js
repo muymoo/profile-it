@@ -103,12 +103,15 @@ router.get('/collection/:collection_id/operation', function(req, res, next) {
 router.get('/collection/:collection_id/operation/:operation_id', function(req, res, next) {
 
   systemProfile
-      .find()
-      .where('ns')
-      .equals(req.params.collection_id)
-      // .where('query')
-      // TODO - want to filter to specific type of query/update/etc. here... how?
+      .find({
+        ns: req.params.collection_id,
+        op: 'query',
+        $where: "this.query && this.query.path && this.query.path === '/page9.js'"
+      })
       .exec(function(err, result) {
+        if(err) {
+          console.log(err);
+        }
         res.send(result);
       });
 });
