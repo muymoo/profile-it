@@ -23,28 +23,10 @@ profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope
 			// TODO? also have available 'Count': item.count
 		}
 
-		angular.element('#timeEachCollection').highcharts({
-	        chart: {
-	            type: 'column',
-	            zoomType: 'xy'
-	        },
-	        title: {
-	            text: 'Time in each collection'
-	        },
-	        xAxis: {
-	            categories: categories,
-	            min: 0
-	        },
-	        yAxis: {
-	            title: {
-	                text: 'Time (ms)'
-	            }
-	        },
-	        series: series,
-	        credits: {
-      			enabled: false
-  			}
-	    });
+		$scope.timeCollectionData = {
+			series: series,
+			categories: categories
+		}
 	});
 
 	$http.get('/stats/collectionoperation').success(function(result) {
@@ -70,28 +52,10 @@ profilerApp.controller('TopLevelController', ['$scope', '$http', function($scope
 			// TODO? also have available 'Count': item.count
 		}
 
-		angular.element('#timeEachCollectionPerOperation').highcharts({
-	        chart: {
-	            type: 'column',
-	            zoomType: 'xy'
-	        },
-	        title: {
-	            text: 'Time in each collection per operation'
-	        },
-	        xAxis: {
-	            categories: categories,
-	            min: 0
-	        },
-	        yAxis: {
-	            title: {
-	                text: 'Time (ms)'
-	            }
-	        },
-	        series: series,
-	        credits: {
-      			enabled: false
-  			}
-	    });
+		$scope.timeCollectionPerOperationData = {
+			series: series,
+			categories: categories
+		}
 	});
 
 }]);
