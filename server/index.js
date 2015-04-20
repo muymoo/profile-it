@@ -1,4 +1,3 @@
-// TODO: Do we need all of these imports?
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -29,7 +28,6 @@ app.use(express.static(path.join(__dirname, '../bower_components')));
 // API routes 
 app.use('/runs', runs);
 app.use('/stats', stats);
-// TODO: /profile, /results, /dashboard, etc.
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,5 +54,4 @@ app.use(function(err, req, res, next) {
   res.send(err);
 });
 
-// TODO: Not sure if we need this?
 module.exports = app;

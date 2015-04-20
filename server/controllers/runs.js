@@ -1,22 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var shell = require('shelljs');
+var LineByLineReader = require('line-by-line');
 
-// Load Run model
-require('../models/run');
+// Load Zip code model
+require('../models/zip');
 var mongoose = require('mongoose');
-var model = mongoose.model('Run');
+var model = mongoose.model('Zip');
 var connection = mongoose.connection;
 connection.setProfiling(2, function (err, doc) {
     console.error(err, doc);
-});
-
-// Get one run
-router.get('/recent', function(req, res, next) {
-    console.info(model);
-	model.findOne(function(err, run){
-		res.send('Last profiler run: ' + run.name);	
-	});
 });
 
 var killProcess = function(pid){
@@ -24,64 +17,62 @@ var killProcess = function(pid){
 	shell.exec('kill ' + pid);
 }
 
-var runDbTests = function() {
-	// Do something in MongoDB to profile
-	model.create(
-		{ 
-			name: 'inserting ' + Date.now(), 
-			start: Date.now(), 
-			duration: 55 
-		}, 
-		function (err, doc) {
-    		if (err) return next(err);
-		}
-	);
-	model.create(
-		{ 
-			name: 'inserting2 ' + Date.now(), 
-			start: Date.now(), 
-			duration: 56 
-		}, 
-		function (err, doc) {
-    		if (err) return next(err);
-		}
-	);
-	model.create(
-		{ 
-			name: 'inserting3 ' + Date.now(), 
-			start: Date.now(), 
-			duration: 57 
-		}, 
-		function (err, doc) {
-    		if (err) return next(err);
-		}
-	);
-	model.create(
-		{ 
-			name: 'inserting4 ' + Date.now(), 
-			start: Date.now(), 
-			duration: 58 
-		}, 
-		function (err, doc) {
-    		if (err) return next(err);
-		}
-	);
+var getZipCodes = function() {
+	var zips = [];
+	var lineReader = new LineByLineReader('/Users/204054399/development/uiuc/profile-it/server/data/zips.json');
 
-	model.findOne(function(err, run){
-        console.info(run);
+	console.info('Reading in zip code data...')
+
+	lineReader.on('error', function(error) {
+		console.error(error);
 	});
 
+	lineReader.on('line', function (line) {
+   		zips.push(JSON.parse(line));
+	});
+
+	console.info('Completed reading in zip code data.')
+	return zips;
+}
+
+var addToDatabase = function(items) {
+	console.info('Adding zip codes to database...');
+
+	// Create a bunch of items
+	items.forEach(function(item) {
+		model.create(
+			item,
+			function (err, doc) {
+    			if (err) return next(err);
+			}
+		);
+	});
+
+	console.info('Zip codes added.');
+}
+
+var findAllInDatabase = function() {
 	model.find(function(err, all){
-        console.info(all);
+        console.info('Found ' + all.length + ' items.');
 	});
+}
 
+var runDbTests = function() {
+
+	var zips = getZipCodes();
+	addToDatabase(zips);
+	// Don't index them
+	// Fetch them all
+	findAllInDatabase();
 }
 
 var createSvg = function(stacksFileName, svgFileName) {
     console.info('Completed profiling. Processing results...');
     
+    // We need to change into the tools directory because the stackcollapse.pl only works if it is running against a file in its directory
     shell.cd('./tools');
-    shell.echo(shell.exec('./stackcollapse.pl ' + stacksFileName +' | ./flamegraph.pl --width=1000').output).to('../public/target/' + svgFileName);
+    shell.exec('./stackcollapse.pl ' + stacksFileName +' | ./flamegraph.pl --width=1000 > ../public/target/' + svgFileName);
+    // Reset the current working directory 
     shell.cd('..');
 
     // Cache a copy for later use
@@ -107,7 +98,7 @@ router.get('/profile', function(req, res, next) {
 
             // Send back the response with the location of the svg and some metadata
 			res.send({
-				name: '12345',
+				name: 'Analysis',
 				startTime: startTime,
 				duration: (endTime - startTime)/1000,
 				flamegraph: 'target/' + svg
