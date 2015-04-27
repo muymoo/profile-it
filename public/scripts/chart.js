@@ -43,6 +43,18 @@ profilerApp.directive('chart', function() {
 	  				align: 'right',
 	  				verticalAlign: 'middle',
             		layout: 'vertical',
+	  			},
+	  			plotOptions: {
+	  				series: {
+	                    cursor: 'pointer',
+	                    point: {
+	                        events: {
+	                            click: function (e) {
+	                            	scope.$emit('select-bar', this.category, this.y); 
+	                            }
+	                        }
+	                    }
+	                }
 	  			}
 		    };
 

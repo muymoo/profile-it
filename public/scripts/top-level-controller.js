@@ -1,4 +1,9 @@
-profilerApp.controller('TopLevelController', ['$scope', 'StatsService', function($scope, StatsService){
+profilerApp.controller('TopLevelController', ['$scope', 'StatsService', '$state', function($scope, StatsService, $state) {
+
+	$scope.$on('select-bar', function(event, x, y) {
+		console.log(x, y);
+		$state.go('zoom1', {collection: x});
+	});
 
 	StatsService.getCollections().then(function(result) {
 		var categories = [];

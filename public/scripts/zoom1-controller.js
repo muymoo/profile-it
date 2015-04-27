@@ -1,6 +1,9 @@
-profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', function($scope, StatsService){
+profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', '$stateParams', function($scope, StatsService, $stateParams) {
 
-	StatsService.getOperations('my_database.events').then(function(result) {
+	var collection = $stateParams.collection;
+	console.log(collection);
+
+	StatsService.getOperations(collection).then(function(result) {
 		var categories = [];
 		var series = [{
 			name: 'Max Millis',
