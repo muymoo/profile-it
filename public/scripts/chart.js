@@ -50,7 +50,7 @@ profilerApp.directive('chart', function() {
 	                    point: {
 	                        events: {
 	                            click: function (e) {
-	                            	scope.$emit('select-bar', this.category, this.y); 
+	                            	scope.$emit('select-bar', this.category); 
 	                            }
 	                        }
 	                    }

@@ -1,7 +1,27 @@
-profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', '$stateParams', function($scope, StatsService, $stateParams) {
+profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', '$stateParams', '$state', function($scope, StatsService, $stateParams, $state) {
 
 	var collection = $stateParams.collection;
-	console.log(collection);
+
+	var splitCharacter = ' - '; // use this to split the operation from the insert/updateobj for user readable data
+
+	$scope.$on('select-bar', function(event, x) {
+		var split = x.split(splitCharacter);
+
+		var params = {
+			collection: collection, 
+			operation: split[0]
+		};
+		console.log(split);
+		if(split.length > 1) {
+			params['obj']=split[1];
+		}
+		if(split.length > 2) {
+			alert('ruh roh');
+			console.log(split);
+		}
+
+		$state.go('zoom2', params);
+	});
 
 	StatsService.getOperations(collection).then(function(result) {
 		var categories = [];
@@ -21,10 +41,10 @@ profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', '$statePara
 
 			var categoryString = item._id.op;
 			if(item._id.query !== undefined) {
-				categoryString += ' ' + JSON.stringify(item._id.query);
+				categoryString += splitCharacter + JSON.stringify(item._id.query);
 			}
 			if(item._id.updateobj !== undefined) {
-				categoryString += ' ' + JSON.stringify(item._id.updateobj);
+				categoryString += splitCharacter + JSON.stringify(item._id.updateobj);
 			}
 
 			categories.push(categoryString);

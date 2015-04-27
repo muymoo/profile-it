@@ -1,7 +1,6 @@
 profilerApp.controller('TopLevelController', ['$scope', 'StatsService', '$state', function($scope, StatsService, $state) {
 
-	$scope.$on('select-bar', function(event, x, y) {
-		console.log(x, y);
+	$scope.$on('select-bar', function(event, x) {
 		$state.go('zoom1', {collection: x});
 	});
 

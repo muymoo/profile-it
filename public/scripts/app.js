@@ -15,7 +15,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       controller: "Zoom1Controller"
     })
     .state('zoom2', {
-      url: "/zoom2",
+      url: "/zoom2?collection&operation&obj",
       templateUrl: "views/zoom2.html",
       controller: "Zoom2Controller"
     })

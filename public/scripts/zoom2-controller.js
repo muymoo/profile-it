@@ -1,8 +1,13 @@
-profilerApp.controller('Zoom2Controller', ['$scope', '$http', function($scope, $http){
+profilerApp.controller('Zoom2Controller', ['$scope', '$http', '$stateParams', function($scope, $http, $stateParams) {
 	
+	var collection = $stateParams.collection;
+	var operation = $stateParams.operation;
+	var obj = $stateParams.obj;
+	console.log(collection, operation, obj);
+
 	$scope.detailsOperationInstanceData = [];
 	$scope.detailsOperationInstance = { data: 'detailsOperationInstanceData' };
-	$http.get('/stats/collection/my_database.events/operation/123').success(function(result) {
+	$http.post('/stats/collection/' + collection + '/operation/id', {operation: operation, obj: obj}).success(function(result) {
 		console.log(result);
 		for(var index in result) {
 			var item = result[index];

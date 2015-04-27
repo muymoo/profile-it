@@ -1,5 +1,8 @@
 var express = require('express');
+var bodyParser = require("body-parser");
 var router = express.Router();
+router.use(bodyParser.urlencoded({ extended: false }));
+
 require('../models/systemprofile');
 
 var mongoose = require('mongoose');
@@ -58,7 +61,7 @@ router.get('/collectionoperation', function(req, res, next) {
 
 });
 
-router.get('/collection/:collection_id/operation', function(req, res, next) {
+router.get('/collection/:collection_name/operation', function(req, res, next) {
 
   systemProfile
     .aggregate(
@@ -66,7 +69,7 @@ router.get('/collection/:collection_id/operation', function(req, res, next) {
       { 
           $match: { 
             ns: { 
-              $eq: req.params.collection_id
+              $eq: req.params.collection_name
             }
           }
         },
@@ -100,14 +103,26 @@ router.get('/collection/:collection_id/operation', function(req, res, next) {
 });
 
 
-router.get('/collection/:collection_id/operation/:operation_id', function(req, res, next) {
+router.post('/collection/:collection_name/operation/id', function(req, res, next) {
+
+  var operation = req.body.operation;
+  var obj = req.body.obj;  // TODO at the moment only have query objs, so hardcoding - need to include updateobjs!!
+
+  var systemProfileQuery = {
+        ns: req.params.collection_name,
+        op: operation
+      };
+  if(obj) {
+    console.log("THERESANOBJ", obj);
+    var parsed = JSON.parse(obj);
+    console.log(parsed, parsed.path);
+    systemProfileQuery['$where'] = "this.query && this.query.path && this.query.path === '" + parsed.path  + "'"//'/page9.js'"
+  }
+
+  console.log('HEREIT Is', systemProfileQuery);
 
   systemProfile
-      .find({
-        ns: req.params.collection_id,
-        op: 'query',
-        $where: "this.query && this.query.path && this.query.path === '/page9.js'"
-      })
+      .find(systemProfileQuery)
       .exec(function(err, result) {
         if(err) {
           console.log(err);
