@@ -1,6 +1,6 @@
 profilerApp.controller('TopLevelController', ['$scope', 'StatsService', '$state', function($scope, StatsService, $state) {
 
-	$scope.$on('select-bar', function(event, x) {
+	$scope.$on('select-collection-bar', function(event, x) {
 		$state.go('zoom1', {collection: x});
 	});
 
@@ -33,6 +33,19 @@ profilerApp.controller('TopLevelController', ['$scope', 'StatsService', '$state'
 		}
 	});
 
+	var splitCharacter = ' - '; // use this to split the operation from the insert/updateobj for user readable data
+
+	$scope.$on('select-collectionoperation-bar', function(event, x) {
+		var split = x.split(splitCharacter);
+
+		var params = {
+			collection: split[0], 
+			operation: split[1]
+		};
+
+		$state.go('zoom2', params);
+	});
+
 	StatsService.getCollectionsOperations().then(function(result) {
 		var categories = [];
 		var series = [{
@@ -49,7 +62,7 @@ profilerApp.controller('TopLevelController', ['$scope', 'StatsService', '$state'
 		for(var index in result) {
 			var item = result[index];
 
-			categories.push(item._id.ns + ' ' + item._id.op);
+			categories.push(item._id.ns + ' - ' + item._id.op);
 			series[0].data.push(item.maxMillis);
 			series[1].data.push(item.avgMillis);
 			series[2].data.push(item.minMillis);

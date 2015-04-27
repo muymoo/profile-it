@@ -7,9 +7,14 @@ profilerApp.directive('chart', function() {
 			title: '@',
 			subtitle: '@?',
 			yAxisTitle: '@',
-			seriesAndCategories: '='
+			seriesAndCategories: '=',
+			selectBarEvent: '@?'
 		},
 		link: function(scope, element) {
+
+			if(!scope.selectBarEvent) {
+				scope.selectBarEvent = 'select-bar';
+			}
 
 			var config = {
 		        chart: {
@@ -50,7 +55,7 @@ profilerApp.directive('chart', function() {
 	                    point: {
 	                        events: {
 	                            click: function (e) {
-	                            	scope.$emit('select-bar', this.category); 
+	                            	scope.$emit(scope.selectBarEvent, this.category); 
 	                            }
 	                        }
 	                    }
