@@ -59,4 +59,8 @@ profilerApp.controller('Zoom1Controller', ['$scope', 'StatsService', '$statePara
 			categories: categories
 		}
 	});
+
+	$scope.up = function() {
+		$state.go('toplevel');
+	};
 }]);
