@@ -1,33 +1,44 @@
 profilerApp.factory('StatsService', function($http, $q) {
 
-	var getCollections = function() {
+	var get = function(url) {
 		var deferred = $q.defer();
-		$http.get('/stats/collection').success(function(result) {
+		$http.get(url).success(function(result) {
 			deferred.resolve(result);
 		});
 		return deferred.promise;
+	};
+
+	var getAllCollections = function() {
+		return get('/stats/allcollections');
+	};
+
+	var topOperationsByTime = function(collection) {
+		return get('/stats/operationtime/' + collection);
+	};
+
+	var topOperationsByCount = function(collection) {
+		return get('/stats/operationcount/' + collection);
+	};
+
+	var getCollections = function() {
+		return get('/stats/collection/' + collection);
 	};
 
 	var getCollectionsOperations = function() {
-		var deferred = $q.defer();
-		$http.get('/stats/collectionoperation').success(function(result) {
-			deferred.resolve(result);
-		});
-		return deferred.promise;
+		return get('/stats/collectionoperation');
 	};
 
 	var getOperations = function(collection) {
-		var deferred = $q.defer();
-		$http.get('/stats/collection/' + collection + '/operation').success(function(result) {
-			deferred.resolve(result);
-		});
-		return deferred.promise;
+		return get('/stats/collection/' + collection + '/operation');
 	};
 
 	return {
 		getCollections: getCollections,
 		getCollectionsOperations: getCollectionsOperations,
-		getOperations: getOperations
+		getOperations: getOperations,
+		topOperationsByTime: topOperationsByTime,
+		topOperationsByCount: topOperationsByCount,
+		getAllCollections: getAllCollections
 	};
 
 });

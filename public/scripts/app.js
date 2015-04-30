@@ -1,9 +1,14 @@
 'use strict';
 
-var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap', 'ui.router']);
+var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap', 'ui.router', 'angularSpinner']);
 
 profilerApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
+    .state('try2', {
+      url: "/",
+      templateUrl: "views/try2.html",
+      controller: "Try2Controller"
+    })    
     .state('toplevel', {
       url: "/",
       templateUrl: "views/top-level.html",
