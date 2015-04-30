@@ -26,6 +26,6 @@ profilerApp.controller('Zoom2Controller', ['$scope', '$http', '$stateParams', '$
 	});
 
 	$scope.up = function() {
-		$state.go('zoom1', {collection: collection});
+		$state.go('try2');
 	};
 }]);

@@ -1,4 +1,4 @@
-profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinnerService, $q) {
+profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinnerService, $q, $state) {
 
 	$scope.collections = [];
 	$scope.selectedCollection = $scope.collections[0];
@@ -24,6 +24,25 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		$q.all([updateOperationsByTime(newData), updateOperationsByCount(newData)]).then(function() {
 			usSpinnerService.stop('myspinner');
 		});
+	});
+
+	$scope.$on('select-bar', function(event, x) {
+		var split = x.split(splitCharacter);
+
+		var params = {
+			collection: $scope.selectedCollection, 
+			operation: split[0]
+		};
+
+		if(split.length > 1) {
+			params['obj']=split[1];
+		}
+		if(split.length > 2) {
+			alert('ruh roh');
+			console.log(split);
+		}
+
+		$state.go('zoom2', params);
 	});
 	
 	function updateOperationsByTime(collection) {

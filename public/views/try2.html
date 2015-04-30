@@ -10,6 +10,8 @@
 		<h3>{{selectedCollection}}</h3>
 	</div>
 	<span us-spinner spinner-key="myspinner"></span>
+</div>
+<div class="row">
 	<div class="col-sm-6">
 		<chart 
 			title="Time to complete operations" 
@@ -22,6 +24,16 @@
 			title="Most popular operations" 
 			y-axis-title="Count" 
 			series-and-categories="countOperations">
+		</chart>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6">
+		<h4>TODO?</h4>
+		<chart 
+			title="Operations over time...?" 
+			y-axis-title="Time (ms)" 
+			series-and-categories="overtime">
 		</chart>
 	</div>
 </div>
