@@ -52,7 +52,7 @@ var addToDatabase = function(items) {
 }
 
 var findAllInDatabase = function() {
-	model.find(function(err, all){
+	model.find({ state: 'WI' }, function(err, all){
         console.info('Found ' + all.length + ' items.');
 	});
 }
@@ -61,7 +61,6 @@ var runDbTests = function() {
 
 	var zips = getZipCodes();
 	addToDatabase(zips);
-	// Don't index them
 	// Fetch them all
 	findAllInDatabase();
 }

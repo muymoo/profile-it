@@ -6,5 +6,7 @@ var ZipSchema = mongoose.Schema({
 	pop: Number,
 	state: String });
 
+ZipSchema.index({ state:1 });
+
 // Set model to default mongodb instance
 mongoose.model('Zip', ZipSchema);
