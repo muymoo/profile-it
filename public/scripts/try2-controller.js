@@ -24,7 +24,8 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		$q.all([
 			updateOperationsByTime(newData), 
 			updateOperationsByCount(newData),
-			updateOperationsOverTime(newData)
+			updateOperationsCountOverTime(newData),
+			updateOperationsMillisOverTime(newData)
 			]).then(function() {
 			usSpinnerService.stop('myspinner');
 		});
@@ -111,10 +112,9 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		return defer.promise;
 	}
 
-	function updateOperationsOverTime(collection) {
+	function updateOperationsCountOverTime(collection) {
 		var defer = $q.defer();
-		StatsService.operationsOverTime(collection).then(function(result) {
-			console.log(result);
+		StatsService.operationsCountOverTime(collection).then(function(result) {
 
 			var seriesObjs = {};
 
@@ -133,11 +133,11 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 			for(obj in seriesObjs) {
 				series.push({
 					name: obj,
-					data: seriesObjs[obj]
+					data: seriesObjs[obj].reverse()
 				});
 			}
 
-			$scope.overtime = {
+			$scope.countOverTime = {
 				series: series
 				// categories: categories
 			}
@@ -145,6 +145,41 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		});
 		return defer.promise;
 	}
+
+	function updateOperationsMillisOverTime(collection) {
+		var defer = $q.defer();
+		StatsService.operationsMillisOverTime(collection).then(function(result) {
+
+			var seriesObjs = {};
+
+			for(var index in result) {
+				var item = result[index];
+						
+				var seriesName = item._id.op;
+				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
+					seriesObjs[seriesName] = [];
+				}
+
+				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day - 1), item.avgMillis]);
+			}
+
+			var series = [];
+			for(obj in seriesObjs) {
+				series.push({
+					name: obj,
+					data: seriesObjs[obj].reverse()
+				});
+			}
+
+			$scope.millisOverTime = {
+				series: series
+				// categories: categories
+			}
+			defer.resolve();
+		});
+		return defer.promise;
+	}
+
 
 	var splitCharacter = ' - '; // use this to split the operation from the insert/updateobj for user readable data
 

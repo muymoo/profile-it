@@ -20,8 +20,12 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return get('/stats/operationcount/' + collection);
 	};
 
-	var operationsOverTime = function(collection) {
+	var operationsCountOverTime = function(collection) {
 		return get('/stats/lastoperations/count/' + collection);
+	}
+
+	var operationsMillisOverTime = function(collection) {
+		return get('/stats/lastoperations/count/' + collection); // for now, just same query as count (since just last time anyway)
 	}
 
 	// var getCollections = function() {
@@ -43,7 +47,8 @@ profilerApp.factory('StatsService', function($http, $q) {
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,
 		getAllCollections: getAllCollections,
-		operationsOverTime: operationsOverTime
+		operationsCountOverTime: operationsCountOverTime,
+		operationsMillisOverTime: operationsMillisOverTime
 	};
 
 });

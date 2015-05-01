@@ -255,31 +255,6 @@ router.get('/lastoperations/count/:collection_name', function(req, res, next) {
             count: { $sum: 1 }
           }
         },
-        // { 
-        //   $match: { 
-        //     ns: { 
-        //       $eq: req.params.collection_name
-        //     }
-        //   }
-        // },
-        // {
-        //   $project: {
-        //     op: 1,
-        //     millis: 1,
-        //     query: {
-        //       $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
-        //     }
-        //   }
-        // },
-        // {
-        //   $group: {
-        //     _id: {'op':'$op', 'query':'$query'},
-        //     maxMillis: { $max: '$millis' },
-        //     avgMillis: { $avg: "$millis" },
-        //     minMillis: { $min: "$millis" },
-        //     count: { $sum: 1 },
-        //   }
-        // },
         {
           $sort: {
             '_id.year': -1,
