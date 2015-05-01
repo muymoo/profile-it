@@ -22,7 +22,6 @@ router.get('/allcollections', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }
@@ -48,7 +47,6 @@ router.get('/collection', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }
@@ -74,7 +72,6 @@ router.get('/collectionoperation', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }
@@ -88,7 +85,7 @@ router.get('/collection/:collection_name/operation', function(req, res, next) {
   systemProfile
     .aggregate(
       [
-      { 
+        { 
           $match: { 
             ns: { 
               $eq: req.params.collection_name
@@ -115,7 +112,6 @@ router.get('/collection/:collection_name/operation', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }
@@ -129,7 +125,7 @@ router.get('/operationtime/:collection_name', function(req, res, next) {
   systemProfile
     .aggregate(
       [
-      { 
+        { 
           $match: { 
             ns: { 
               $eq: req.params.collection_name
@@ -137,8 +133,17 @@ router.get('/operationtime/:collection_name', function(req, res, next) {
           }
         },
         {
+          $project: {
+            op: 1,
+            millis: 1,
+            query: {
+              $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
+            }
+          }
+        },
+        {
           $group: {
-            _id: {'op':'$op', 'query':'$query', 'updateobj':'$updateobj'},
+            _id: {'op':'$op', 'query':'$query'},
             maxMillis: { $max: '$millis' },
             avgMillis: { $avg: "$millis" },
             minMillis: { $min: "$millis" },
@@ -156,7 +161,6 @@ router.get('/operationtime/:collection_name', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }
@@ -170,7 +174,7 @@ router.get('/operationcount/:collection_name', function(req, res, next) {
   systemProfile
     .aggregate(
       [
-      { 
+        { 
           $match: { 
             ns: { 
               $eq: req.params.collection_name
@@ -178,8 +182,17 @@ router.get('/operationcount/:collection_name', function(req, res, next) {
           }
         },
         {
+          $project: {
+            op: 1,
+            millis: 1,
+            query: {
+              $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
+            }
+          }
+        },
+        {
           $group: {
-            _id: {'op':'$op', 'query':'$query', 'updateobj':'$updateobj'},
+            _id: {'op':'$op', 'query':'$query'},
             maxMillis: { $max: '$millis' },
             avgMillis: { $avg: "$millis" },
             minMillis: { $min: "$millis" },
@@ -197,7 +210,6 @@ router.get('/operationcount/:collection_name', function(req, res, next) {
       ]
     )
     .exec(function(err, result) {
-      console.log('IN');
       if (err) {
         console.log('ERROR',err);
       }

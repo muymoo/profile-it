@@ -19,7 +19,7 @@ profilerApp.directive('chart', function() {
 			var config = {
 		        chart: {
 		        	renderTo: element[0],
-		            type: 'column',
+		            type: 'bar',
 		            zoomType: 'xy'
 		        },
 		        title: {
@@ -32,7 +32,7 @@ profilerApp.directive('chart', function() {
 		            categories: scope.categories,
 		            min: 0,
 		            labels: {
-			            enabled: false
+			            enabled: true
 					}
 		        },
 		        yAxis: {
