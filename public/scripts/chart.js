@@ -73,10 +73,6 @@ profilerApp.directive('chart', function() {
 
 		    if(scope.type == 'spline') {
 		    	config.xAxis.type = 'datetime';
-            // dateTimeLabelFormats: { // don't display the dummy year
-            //     month: '%e. %b',
-            //     year: '%b'
-            // },
 		    }
 
 		    scope.chart = new Highcharts.Chart(config);

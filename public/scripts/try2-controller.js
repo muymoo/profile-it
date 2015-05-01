@@ -115,17 +115,26 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		var defer = $q.defer();
 		StatsService.operationsOverTime(collection).then(function(result) {
 			console.log(result);
-			var series = [{
-				name: 'Count',
-				data: []
-			}];
+
+			var seriesObjs = {};
 
 			for(var index in result) {
 				var item = result[index];
+						
+				var seriesName = item._id.op;
+				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
+					seriesObjs[seriesName] = [];
+				}
 
-				// var categoryString = makeCategoryString(item._id);
-							
-				series[0].data.push([Date.UTC(item._id.year, item._id.month, item._id.day), item.count]);
+				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day - 1), item.count]);
+			}
+
+			var series = [];
+			for(obj in seriesObjs) {
+				series.push({
+					name: obj,
+					data: seriesObjs[obj]
+				});
 			}
 
 			$scope.overtime = {

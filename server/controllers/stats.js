@@ -243,7 +243,7 @@ router.get('/lastoperations/count/:collection_name', function(req, res, next) {
         {
           $group : {
             _id: {
-              // op : '$op',
+              op : '$op',
               // query: '$query',
               year : { $year : "$ts" },        
               month : { $month : "$ts" },        
