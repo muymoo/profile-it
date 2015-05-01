@@ -2,11 +2,14 @@ var express = require('express');
 var router = express.Router();
 var shell = require('shelljs');
 var LineByLineReader = require('line-by-line');
+var q = require('q');
 
 // Load Zip code model
+require('../models/zip-with-index');
 require('../models/zip');
 var mongoose = require('mongoose');
-var model = mongoose.model('Zip');
+var zipWithIndex = mongoose.model('ZipWithIndex');
+var zip = mongoose.model('Zip');
 var connection = mongoose.connection;
 connection.setProfiling(2, function (err, doc) {
     console.error(err, doc);
@@ -20,27 +23,42 @@ var killProcess = function(pid){
 var getZipCodes = function() {
 	var zips = [];
 	var lineReader = new LineByLineReader('/Users/204054399/development/uiuc/profile-it/server/data/zips.json');
+	var deferred = q.defer();
 
 	console.info('Reading in zip code data...')
 
 	lineReader.on('error', function(error) {
 		console.error(error);
+		deferred.reject(error);
 	});
 
 	lineReader.on('line', function (line) {
    		zips.push(JSON.parse(line));
 	});
 
-	console.info('Completed reading in zip code data.')
-	return zips;
+	lineReader.on('end', function () {
+		console.info('Completed reading in zip code data. Count:', zips.length);
+		deferred.resolve(zips);
+	});
+
+	return deferred.promise;
 }
 
 var addToDatabase = function(items) {
+	var deferred = q.defer();
+
 	console.info('Adding zip codes to database...');
 
 	// Create a bunch of items
 	items.forEach(function(item) {
-		model.create(
+		zip.create(
+			item,
+			function (err, doc) {
+    			if (err) return next(err);
+			}
+		);
+
+		zipWithIndex.create(
 			item,
 			function (err, doc) {
     			if (err) return next(err);
@@ -49,21 +67,26 @@ var addToDatabase = function(items) {
 	});
 
 	console.info('Zip codes added.');
+	deferred.resolve();
+	return deferred.promise;
 }
 
 var findAllInDatabase = function() {
+	var deferred = q.defer();
+
 	model.find({ state: 'WI' }, function(err, all){
         console.info('Found ' + all.length + ' items.');
+        deferred.resolve(all);
 	});
+	
+	return deferred.promise;
 }
 
 var runDbTests = function() {
-
-	var zips = getZipCodes();
-	addToDatabase(zips);
-	// Fetch them all
-	findAllInDatabase();
-}
+	getZipCodes()
+		.then(addToDatabase)
+		.then(findAllInDatabase);
+};
 
 var createSvg = function(stacksFileName, svgFileName) {
     console.info('Completed profiling. Processing results...');

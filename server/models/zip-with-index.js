@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
 
-var ZipSchema = mongoose.Schema({ 
+var ZipSchemaWithIndex = mongoose.Schema({ 
 	city: String,
 	loc: [],
 	pop: Number,
 	state: String });
 
+ZipSchemaWithIndex.index({ state:1 });
 
 // Set model to default mongodb instance
-mongoose.model('Zip', ZipSchema);
+mongoose.model('ZipWithIndex', ZipSchemaWithIndex);
