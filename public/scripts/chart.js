@@ -8,18 +8,22 @@ profilerApp.directive('chart', function() {
 			subtitle: '@?',
 			yAxisTitle: '@',
 			seriesAndCategories: '=',
-			selectBarEvent: '@?'
+			selectBarEvent: '@?',
+			type: '@?'
 		},
 		link: function(scope, element) {
 
 			if(!scope.selectBarEvent) {
 				scope.selectBarEvent = 'select-bar';
 			}
+			if(!scope.type) {
+				scope.type = 'bar';
+			}
 
 			var config = {
 		        chart: {
 		        	renderTo: element[0],
-		            type: 'bar',
+		            type: scope.type,
 		            zoomType: 'xy'
 		        },
 		        title: {
@@ -30,7 +34,6 @@ profilerApp.directive('chart', function() {
 		        },
 		        xAxis: {
 		            categories: scope.categories,
-		            min: 0,
 		            labels: {
 			            enabled: true
 					}
@@ -59,9 +62,22 @@ profilerApp.directive('chart', function() {
 	                            }
 	                        }
 	                    }
-	                }
+	                },
+	                spline: {
+		                marker: {
+		                    enabled: true
+		                }
+		            }
 	  			}
 		    };
+
+		    if(scope.type == 'spline') {
+		    	config.xAxis.type = 'datetime';
+            // dateTimeLabelFormats: { // don't display the dummy year
+            //     month: '%e. %b',
+            //     year: '%b'
+            // },
+		    }
 
 		    scope.chart = new Highcharts.Chart(config);
 

@@ -20,25 +20,30 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return get('/stats/operationcount/' + collection);
 	};
 
-	var getCollections = function() {
-		return get('/stats/collection/' + collection);
-	};
+	var operationsOverTime = function(collection) {
+		return get('/stats/lastoperations/count/' + collection);
+	}
 
-	var getCollectionsOperations = function() {
-		return get('/stats/collectionoperation');
-	};
+	// var getCollections = function() {
+	// 	return get('/stats/collection/' + collection);
+	// };
 
-	var getOperations = function(collection) {
-		return get('/stats/collection/' + collection + '/operation');
-	};
+	// var getCollectionsOperations = function() {
+	// 	return get('/stats/collectionoperation');
+	// };
+
+	// var getOperations = function(collection) {
+	// 	return get('/stats/collection/' + collection + '/operation');
+	// };
 
 	return {
-		getCollections: getCollections,
-		getCollectionsOperations: getCollectionsOperations,
-		getOperations: getOperations,
+		// getCollections: getCollections,
+		// getCollectionsOperations: getCollectionsOperations,
+		// getOperations: getOperations,
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,
-		getAllCollections: getAllCollections
+		getAllCollections: getAllCollections,
+		operationsOverTime: operationsOverTime
 	};
 
 });

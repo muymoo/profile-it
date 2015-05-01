@@ -21,7 +21,11 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 		}
 
 		usSpinnerService.spin('myspinner');
-		$q.all([updateOperationsByTime(newData), updateOperationsByCount(newData)]).then(function() {
+		$q.all([
+			updateOperationsByTime(newData), 
+			updateOperationsByCount(newData),
+			updateOperationsOverTime(newData)
+			]).then(function() {
 			usSpinnerService.stop('myspinner');
 		});
 	});
@@ -101,6 +105,32 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 			$scope.countOperations = {
 				series: series,
 				categories: categories
+			}
+			defer.resolve();
+		});
+		return defer.promise;
+	}
+
+	function updateOperationsOverTime(collection) {
+		var defer = $q.defer();
+		StatsService.operationsOverTime(collection).then(function(result) {
+			console.log(result);
+			var series = [{
+				name: 'Count',
+				data: []
+			}];
+
+			for(var index in result) {
+				var item = result[index];
+
+				// var categoryString = makeCategoryString(item._id);
+							
+				series[0].data.push([Date.UTC(item._id.year, item._id.month, item._id.day), item.count]);
+			}
+
+			$scope.overtime = {
+				series: series
+				// categories: categories
 			}
 			defer.resolve();
 		});
