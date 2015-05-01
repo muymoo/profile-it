@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var ZipSchemaWithIndex = mongoose.Schema({ 
+	_id: String, 
 	city: String,
 	loc: [],
 	pop: Number,

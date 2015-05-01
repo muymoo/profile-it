@@ -29,7 +29,7 @@ profilerApp.controller('Zoom3Controller', ['$scope', '$http', '$timeout', functi
             $scope.progress.state = 'Generating Flame Graph...'
         }
 
-        $timeout(parsing, 5000);
-        $timeout(generatingSvg, 8000);
+        $timeout(parsing, 8000);
+        $timeout(generatingzSvg, 9000);
 	};
 }]);
