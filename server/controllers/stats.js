@@ -112,7 +112,9 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
       $sort: {
         '_id.year': -1,
         '_id.month': -1,
-        '_id.day': -1
+        '_id.day': -1,
+        '_id.hour': -1,
+        '_id.minute': -1
       }
   };
 
