@@ -3,9 +3,7 @@
 
 <div class="row">
     <div class="col-lg-6">
-        <h2 class="sub-header">10 Second Profiler
-            <button class="btn btn-sm btn-primary" type="button" ng-click="profile()">Run Profiler</button>
-        </h2>
+        <h2 class="sub-header">10 Second Profiler</h2>
          <label class="checkbox">
             <input type="checkbox" ng-model="queries.findWI">
             Find All Zip Codes in WI
@@ -14,13 +12,19 @@
             <input type="checkbox" ng-model="queries.findWIMultiple">
             Find All Zip Codes in WI (loop 10 times)
         </label>
-        <div class="col-lg-6">
-            <progressbar ng-class="progress.value !== 100 ? 'progress-striped active': ''" max="100"
-                         value="progress.value"
-                         type="success"><i><span
-                    ng-hide="progress.value < 5">{{progress.state}}</span></bar></i>
-            </progressbar>
-            </div>
-        <object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
+        <button class="btn btn-sm btn-primary" type="button" ng-click="profile()">Run Profiler</button>
     </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <h2 class="sub-header">Flame Graph</h2>
+        <progressbar ng-class="progress.value !== 100 ? 'progress-striped active': ''" max="100"
+                     value="progress.value"
+                     type="success"><i><span
+                ng-hide="progress.value < 5">{{progress.state}}</span></bar></i>
+        </progressbar>
+    </div>
+</div>
+<div class="row">
+    <object ng-if="result.flamegraph" data="{{result.flamegraph}}" type="image/svg+xml"></object>
 </div>
