@@ -126,7 +126,7 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 					seriesObjs[seriesName] = [];
 				}
 
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day - 1), item.count]);
+				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.count]);
 			}
 
 			var series = [];
@@ -160,7 +160,7 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 					seriesObjs[seriesName] = [];
 				}
 
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day - 1), item.avgMillis]);
+				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.avgMillis]);
 			}
 
 			var series = [];

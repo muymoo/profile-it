@@ -97,7 +97,9 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
         // query: '$query',
         year : { $year : "$ts" },        
         month : { $month : "$ts" },        
-        day : { $dayOfMonth : "$ts" }
+        day : { $dayOfMonth : "$ts" },
+        hour: { $hour: "$ts"},
+        minute: { $minute: "$ts"}
       },
       maxMillis: { $max: '$millis' },
       avgMillis: { $avg: "$millis" },
