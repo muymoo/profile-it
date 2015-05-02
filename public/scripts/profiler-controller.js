@@ -12,7 +12,7 @@ profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', fun
 
         console.log("Profiling...");
 		// Yes, this should be a service...
-		$http.get('/profiler/profile').success(function(data) {
+		$http.get('/profiler/profile?queries=findWI').success(function(data) {
 			$scope.result = data;
             $scope.progress.value = 100;
             $scope.progress.state = 'Done ' + data.duration + 's';

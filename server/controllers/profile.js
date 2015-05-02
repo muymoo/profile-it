@@ -1,109 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var shell = require('shelljs');
-var LineByLineReader = require('line-by-line');
-var q = require('q');
-
-// Load Zip code model
-require('../models/zipwithindex');
-require('../models/zip');
-var mongoose = require('mongoose');
-var zipWithIndex = mongoose.model('ZipWithIndex');
-var zip = mongoose.model('Zip');
-var connection = mongoose.connection;
-connection.setProfiling(2, function (err, doc) {
-    console.error(err, doc);
-});
+var queryRunner = require('../services/database-query-runner');
+var svgMaker = require('../services/svg-maker');
 
 var killProcess = function(pid){
     console.info('Killing:', pid);
 	shell.exec('kill ' + pid);
 }
-
-var getZipCodesFromFile = function() {
-	var zips = [];
-	var lineReader = new LineByLineReader('/Users/204054399/development/uiuc/profile-it/server/data/small.json');
-	var deferred = q.defer();
-
-	console.info('Reading in zip code data...')
-
-	lineReader.on('error', function(error) {
-		console.error(error);
-		deferred.reject(error);
-	});
-
-	lineReader.on('line', function (line) {
-   		zips.push(JSON.parse(line));
-	});
-
-	lineReader.on('end', function () {
-		console.info('Completed reading in zip code data. Count:', zips.length);
-		deferred.resolve(zips);
-	});
-
-	return deferred.promise;
-}
-
-var addToDatabase = function(items) {
-	console.info('Adding ' + items.length + ' zip codes to database...');
-	
-	// Create a bunch of items
-	var promise = zip.create(
-		items,
-		function (err, doc) {
-			console.error(err);
-		}
-	);
-
-	return promise.then( function () {
-		zipWithIndex.create(
-			items,
-			function (err, doc) {
-				console.error(err);
-			}
-		);
-	});
-}
-
-var findAllInDatabase = function() {
-	console.info('Searching database for WI...');
-	
-	var i = 0;
-	
-	while(i < 10) {
-		zip.find({ state: 'WI' }, function(err, all){
-	        console.info('Found ' + all.length + ' items without an index.');
-		});
-		i++;
-	}
-
-	zipWithIndex.find({ state: 'WI' }, function(err, all){
-        console.info('Found ' + all.length + ' items with an index.');
-	});
-}
-
-var runDbTests = function() {
-	findAllInDatabase();
-};
-
-var updateLastSvg = function(fileName) {
-	shell.cat('public/target/' + fileName).to('public/target/last.svg');
-};
-
-var createSvg = function(stacksFileName, svgFileName) {
-    console.info('Completed profiling. Processing results...');
-    
-    // We need to change into the tools directory because the stackcollapse.pl only works if it is running against a file in its directory
-    shell.cd('./tools');
-    shell.exec('./stackcollapse.pl ' + stacksFileName +' | ./flamegraph.pl --width=1000 > ../public/target/' + svgFileName);
-    // Reset the current working directory 
-    shell.cd('..');
-
-    // Cache a copy for later use
-    updateLastSvg(svgFileName);
-
-    console.info('Completed processing results. Created SVG.');
-};
 
 // Profile the database and return a flamegraph
 router.get('/profile', function(req, res, next) {
@@ -118,7 +22,7 @@ router.get('/profile', function(req, res, next) {
 		function(){
 
             // Once it's done running the profiler, take the results and create an svg.
-            createSvg(stacksFile, svg);
+            svgMaker.createSvg(stacksFile, svg);
             var endTime = Date.now();
 
             // Send back the response with the location of the svg and some metadata
@@ -131,14 +35,22 @@ router.get('/profile', function(req, res, next) {
 		});
 
     // Wait for the dtrace to warm up and then run some queries on the db to profile
-	setTimeout(runDbTests, 5000);
+	setTimeout(function() {
+		var queries = req.query.queries;
+		if(queries instanceof Array) {
+			queryRunner.runQueries(queries);
+		} else {
+			queryRunner.runQueries([queries]);
+		}
+		
+	}, 5000);
 
 	// Kill the dtrace because it doesn't stop on its own
 	setTimeout(killProcess.bind(null, dtrace.pid), 10000);
 });
 
 router.get('/populate', function(req, res, next) {
-	getZipCodesFromFile().then(addToDatabase);
+	queryRunner.addInitialZipCodes();
 	res.send("Added zip codes to database.");
 });
 
