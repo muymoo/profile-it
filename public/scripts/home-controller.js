@@ -11,8 +11,12 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 
 	$scope.$watch('selectedCollection', updateAllChartsAndUrl);
 
-	$scope.$on('select-bar', function(event, bar) {
-		$state.go('details', StatsService.getDetailsParams($scope.selectedCollection, bar));
+	$scope.$on('select-bar', function(event, category, seriesName) {
+		$state.go('details', StatsService.getDetailsParams($scope.selectedCollection, category));
+	});
+
+	$scope.$on('select-timebased', function(event, category, seriesName) {
+		$state.go('details', StatsService.getDetailsParams($scope.selectedCollection, seriesName));
 	});
 
 	function setSelectedCollection(newCollections) {

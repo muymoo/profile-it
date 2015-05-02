@@ -19,6 +19,7 @@
 		<chart 
 			title="Time to complete operations" 
 			y-axis-title="Time (ms)" 
+			select-event="select-bar"
 			series-and-categories="timeOperations">
 		</chart>
 	</div>
@@ -26,6 +27,7 @@
 		<chart 
 			title="Most popular operations" 
 			y-axis-title="Count" 
+			select-event="select-bar"
 			series-and-categories="countOperations">
 		</chart>
 	</div>
@@ -34,6 +36,7 @@
 			title="Count over time" 
 			y-axis-title="Count" 
 			series-and-categories="countOverTime"
+			select-event="select-timebased"
 			type="spline">
 		</chart>
 	</div>
@@ -42,6 +45,7 @@
 			title="Average milliseconds to complete over time" 
 			y-axis-title="Average milliseconds" 
 			series-and-categories="millisOverTime"
+			select-event="select-timebased"
 			type="spline">
 		</chart>
 	</div>
