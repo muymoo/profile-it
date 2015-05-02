@@ -6,11 +6,7 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 		$scope.selectedCollection = $scope.collections[0];
 	});
 
-	StatsService.getAllCollections().then(function(results) {
-		var collections = [];
-		for(i in results) {
-			collections.push(results[i]._id.ns);
-		}
+	StatsService.getAllCollections().then(function(collections) {
 		$scope.collections = collections;
 	});
 
@@ -52,34 +48,8 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 	
 	function updateOperationsByTime(collection) {
 		var defer = $q.defer();
-		StatsService.topOperationsByTime(collection).then(function(result) {
-			var categories = [];
-			var series = [{
-				name: 'Max Millis',
-				data: []
-			},{
-				name: 'Avg Millis',
-				data: []
-			},{
-				name: 'Min Millis',
-				data: []
-			}];
-
-			for(var index in result) {
-				var item = result[index];
-
-				var categoryString = makeCategoryString(item._id);
-							
-				categories.push(categoryString);
-				series[0].data.push(item.maxMillis);
-				series[1].data.push(item.avgMillis);
-				series[2].data.push(item.minMillis);
-			}
-
-			$scope.timeOperations = {
-				series: series,
-				categories: categories
-			}
+		StatsService.topOperationsByTime(collection).then(function(seriesAndCategories) {
+			$scope.timeOperations = seriesAndCategories;
 			defer.resolve();
 		});
 		return defer.promise;
@@ -87,26 +57,8 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 
 	function updateOperationsByCount(collection) {
 		var defer = $q.defer();
-		StatsService.topOperationsByCount(collection).then(function(result) {
-			var categories = [];
-			var series = [{
-				name: 'Count',
-				data: []
-			}];
-
-			for(var index in result) {
-				var item = result[index];
-
-				var categoryString = makeCategoryString(item._id);
-							
-				categories.push(categoryString);
-				series[0].data.push(item.count);
-			}
-
-			$scope.countOperations = {
-				series: series,
-				categories: categories
-			}
+		StatsService.topOperationsByCount(collection).then(function(seriesAndCategories) {
+			$scope.countOperations = seriesAndCategories;
 			defer.resolve();
 		});
 		return defer.promise;
@@ -114,33 +66,8 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 
 	function updateOperationsCountOverTime(collection) {
 		var defer = $q.defer();
-		StatsService.operationsCountOverTime(collection).then(function(result) {
-
-			var seriesObjs = {};
-
-			for(var index in result) {
-				var item = result[index];
-						
-				var seriesName = item._id.op;
-				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
-					seriesObjs[seriesName] = [];
-				}
-
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.count]);
-			}
-
-			var series = [];
-			for(obj in seriesObjs) {
-				series.push({
-					name: obj,
-					data: seriesObjs[obj].reverse()
-				});
-			}
-
-			$scope.countOverTime = {
-				series: series
-				// categories: categories
-			}
+		StatsService.operationsCountOverTime(collection).then(function(series) {
+			$scope.countOverTime = series;
 			defer.resolve();
 		});
 		return defer.promise;
@@ -148,50 +75,11 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 
 	function updateOperationsMillisOverTime(collection) {
 		var defer = $q.defer();
-		StatsService.operationsMillisOverTime(collection).then(function(result) {
-
-			var seriesObjs = {};
-
-			for(var index in result) {
-				var item = result[index];
-						
-				var seriesName = item._id.op;
-				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
-					seriesObjs[seriesName] = [];
-				}
-				
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.avgMillis]);
-			}
-
-			var series = [];
-			for(obj in seriesObjs) {
-				series.push({
-					name: obj,
-					data: seriesObjs[obj].reverse()
-				});
-			}
-
-			$scope.millisOverTime = {
-				series: series
-				// categories: categories
-			}
+		StatsService.operationsMillisOverTime(collection).then(function(series) {
+			$scope.millisOverTime = series;
 			defer.resolve();
 		});
 		return defer.promise;
-	}
-
-
-	var splitCharacter = ' - '; // use this to split the operation from the insert/updateobj for user readable data
-
-	function makeCategoryString(obj) {
-		var categoryString = obj.op;
-		if(obj.query !== undefined) {
-			categoryString += splitCharacter + JSON.stringify(obj.query);
-		}
-		if(obj.updateobj !== undefined) {
-			categoryString += splitCharacter + JSON.stringify(obj.updateobj);
-		}
-		return categoryString;
 	}
 
 });
