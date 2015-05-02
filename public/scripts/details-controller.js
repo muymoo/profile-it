@@ -1,4 +1,4 @@
-profilerApp.controller('DetailsController', function($scope, $http, $stateParams, $state, DetailsService) {
+profilerApp.controller('DetailsController', function($scope, $http, $stateParams, DetailsService) {
 
 	$scope.collection = $stateParams.collection;
 	$scope.operation = $stateParams.operation;
@@ -22,8 +22,4 @@ profilerApp.controller('DetailsController', function($scope, $http, $stateParams
 		};
 
 	});
-
-	$scope.up = function() {
-		$state.go('home');
-	};
 });

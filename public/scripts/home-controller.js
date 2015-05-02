@@ -1,27 +1,51 @@
-profilerApp.controller('HomeController', function($scope, StatsService, usSpinnerService, $q, $state) {
+profilerApp.controller('HomeController', function($scope, StatsService, usSpinnerService, $q, $state, $location) {
 
 	$scope.collections = [];
-	$scope.selectedCollection = $scope.collections[0];
+	// $scope.selectedCollection = $scope.collections[0];
 
 	StatsService.getAllCollections().then(function(collections) {
 		$scope.collections = collections;
 	});
 
-	$scope.$watch('collections', function(newData) {
-		$scope.selectedCollection = $scope.collections[0];
-	});
+	$scope.$watch('collections', setSelectedCollection);
 
-	$scope.$watch('selectedCollection', updateAllCharts);
+	$scope.$watch('selectedCollection', updateAllChartsAndUrl);
 
 	$scope.$on('select-bar', function(event, bar) {
 		$state.go('details', StatsService.getDetailsParams($scope.selectedCollection, bar));
 	});
 
-	function updateAllCharts(newData) {
+	function setSelectedCollection(newCollections) {
+
+		if(newCollections.length === 0) {
+			return; // do nothing the first time (when initialized to [])
+		}
+
+		var collectionQueryParam = $location.search().collection;
+
+		if(collectionQueryParam) {
+			for(var i in $scope.collections) {
+				if(collectionQueryParam === $scope.collections[i]) {
+					// if it's a valid collection still, use that as the selectedCollection
+					$scope.selectedCollection = collectionQueryParam;
+					return;
+				}
+			}
+		}
+
+		// otherwise, just set to the first one
+		$scope.selectedCollection = $scope.collections[0];
+	}
+
+	function updateAllChartsAndUrl(newData) {
 
 		if(newData == undefined) {
-			return;
+			return; // do nothing the first time (called with undefined)
 		}
+
+		// change url to have collection param
+		$state.go('home.collection', {collection: newData},
+			{location:"replace", inherit:false}); 
 
 		usSpinnerService.spin('myspinner');
 
