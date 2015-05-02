@@ -25,18 +25,23 @@
             </div>
         </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container-fluid" ng-controller="MainController">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li ui-sref-active="active"><a ui-sref="home">Home</a></li>
                     <li ui-sref-active="active"><a ui-sref="profiler">Profiler</a></li>
                 </ul>
+                <div class="bottom">
+                    <a href="#" ng-click="populate()">{{ populateText }}</a>
+                </div>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <div ui-view></div>
             </div>
         </div>
+
+    
     </div>
 
     <script src="bower_components/angular/angular.js"></script>
@@ -51,6 +56,7 @@
     <script src="scripts/chart.js"></script>
     <script src="scripts/stats-service.js"></script>
 
+    <script src="scripts/main-controller.js"></script>
     <script src="scripts/home-controller.js"></script>
     <script src="scripts/details-controller.js"></script>
     <script src="scripts/profiler-controller.js"></script>

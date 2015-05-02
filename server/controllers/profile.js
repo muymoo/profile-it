@@ -20,7 +20,7 @@ var killProcess = function(pid){
 	shell.exec('kill ' + pid);
 }
 
-var getZipCodes = function() {
+var getZipCodesFromFile = function() {
 	var zips = [];
 	var lineReader = new LineByLineReader('/Users/204054399/development/uiuc/profile-it/server/data/small.json');
 	var deferred = q.defer();
@@ -46,9 +46,6 @@ var getZipCodes = function() {
 
 var addToDatabase = function(items) {
 	console.info('Adding ' + items.length + ' zip codes to database...');
-
-	// connection.db.dropCollection('zips');
-	// connection.db.dropCollection('zipwithindexes');
 	
 	// Create a bunch of items
 	var promise = zip.create(
@@ -86,9 +83,7 @@ var findAllInDatabase = function() {
 }
 
 var runDbTests = function() {
-	getZipCodes()
-		//.then(addToDatabase)
-		.then(findAllInDatabase);
+	findAllInDatabase();
 };
 
 var updateLastSvg = function(fileName) {
@@ -139,7 +134,12 @@ router.get('/profile', function(req, res, next) {
 	setTimeout(runDbTests, 5000);
 
 	// Kill the dtrace because it doesn't stop on its own
-	setTimeout(killProcess.bind(null, dtrace.pid), 30000);
+	setTimeout(killProcess.bind(null, dtrace.pid), 10000);
+});
+
+router.get('/populate', function(req, res, next) {
+	getZipCodesFromFile().then(addToDatabase);
+	res.send("Added zip codes to database.");
 });
 
 module.exports = router;

@@ -159,7 +159,7 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
 					seriesObjs[seriesName] = [];
 				}
-
+				
 				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.avgMillis]);
 			}
 

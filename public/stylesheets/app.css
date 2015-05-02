@@ -108,3 +108,8 @@ body {
 .gridStyle {
   height: 500px;
 }
+
+.bottom {
+  position: absolute;
+  bottom: 10px;
+}

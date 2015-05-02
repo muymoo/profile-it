@@ -29,7 +29,7 @@ profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', fun
             $scope.progress.state = 'Generating Flame Graph...'
         }
 
-        $timeout(parsing, 8000);
-        $timeout(generatingSvg, 15000);
+        $timeout(parsing, 3000);
+        $timeout(generatingSvg, 6000);
 	};
 }]);
