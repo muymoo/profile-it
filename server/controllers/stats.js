@@ -25,7 +25,7 @@ var filterOutInsertObjects = {
     millis: 1,
     ts: 1,
     query: {
-      $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
+      $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'HIDE-INSERT-OBJ', else: '$query' } // group all insert query objects together
     }
   }
 };
@@ -154,6 +154,8 @@ router.post('/collection/:collection_name/operation', function(req, res, next) {
 
   systemProfile
       .find(systemProfileQuery)
+      .limit(100)
+      .sort({ts: -1})
       .exec(function(err, result) {
         console.log(result);
         if(err) {

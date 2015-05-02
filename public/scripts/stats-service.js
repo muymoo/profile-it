@@ -4,7 +4,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 
 	function makeCategoryString(obj) {
 		var categoryString = obj.op;
-		if(obj.query !== undefined) {
+		if(obj.query !== undefined && obj.query !== 'HIDE-INSERT-OBJ') { // hide insert objects since they're each unique
 			categoryString += splitCharacter + JSON.stringify(obj.query);
 		}
 		return categoryString;
