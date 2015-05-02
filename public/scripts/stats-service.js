@@ -9,41 +9,26 @@ profilerApp.factory('StatsService', function($http, $q) {
 	};
 
 	var getAllCollections = function() {
-		return get('/stats/allcollections');
+		return get('/stats/collection');
 	};
 
 	var topOperationsByTime = function(collection) {
-		return get('/stats/operationtime/' + collection);
+		return get('/stats/operation/' + collection + '?sortBy=avgMillis');
 	};
 
 	var topOperationsByCount = function(collection) {
-		return get('/stats/operationcount/' + collection);
+		return get('/stats/operation/' + collection + '?sortBy=count');
 	};
 
 	var operationsCountOverTime = function(collection) {
-		return get('/stats/lastoperations/count/' + collection);
+		return get('/stats/operation/' + collection + '/recent');
 	}
 
 	var operationsMillisOverTime = function(collection) {
-		return get('/stats/lastoperations/count/' + collection); // for now, just same query as count (since just last time anyway)
+		return get('/stats/operation/' + collection + '/recent');
 	}
 
-	// var getCollections = function() {
-	// 	return get('/stats/collection/' + collection);
-	// };
-
-	// var getCollectionsOperations = function() {
-	// 	return get('/stats/collectionoperation');
-	// };
-
-	// var getOperations = function(collection) {
-	// 	return get('/stats/collection/' + collection + '/operation');
-	// };
-
 	return {
-		// getCollections: getCollections,
-		// getCollectionsOperations: getCollectionsOperations,
-		// getOperations: getOperations,
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,
 		getAllCollections: getAllCollections,

@@ -9,7 +9,28 @@ var mongoose = require('mongoose');
 mongoose.set('debug', true)
 var systemProfile = mongoose.model('SystemProfile');
 
-router.get('/allcollections', function(req, res, next) {
+var getMatchCollectionName = function(req) {
+  return { 
+    $match: { 
+      ns: { 
+        $eq: req.params.collection_name
+      }
+    }
+  }
+};
+
+var filterOutInsertObjects = {
+  $project: {
+    op: 1,
+    millis: 1,
+    ts: 1,
+    query: {
+      $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
+    }
+  }
+};
+
+router.get('/collection', function(req, res, next) {
 
   systemProfile
     .aggregate(
@@ -23,255 +44,89 @@ router.get('/allcollections', function(req, res, next) {
     )
     .exec(function(err, result) {
       if (err) {
-        console.log('ERROR',err);
+        console.error('ERROR',err);
       }
       res.send(result);
     });
 
 });
 
-// router.get('/collection', function(req, res, next) {
+router.get('/operation/:collection_name', function(req, res, next) {
 
-//   systemProfile
-//     .aggregate(
-//       [
-//         {
-//           $group: {
-//             _id: {'ns':'$ns'},
-//             maxMillis: { $max: '$millis' },
-//             avgMillis: { $avg: "$millis" },
-//             minMillis: { $min: "$millis" },
-//             count: { $sum: 1 },
-//           }
-//         }
-//       ]
-//     )
-//     .exec(function(err, result) {
-//       if (err) {
-//         console.log('ERROR',err);
-//       }
-//       res.send(result);
-//     });
+  var group = {
+    $group: {
+      _id: {'op':'$op', 'query':'$query'},
+      maxMillis: { $max: '$millis' },
+      avgMillis: { $avg: "$millis" },
+      minMillis: { $min: "$millis" },
+      count: { $sum: 1 },
+    }
+  };
 
-// });
+  var sort = {};
+  sort['$sort'] = {};
+  sort['$sort'][req.query.sortBy] = -1;
 
-// router.get('/collectionoperation', function(req, res, next) {
+  var limit = {
+    $limit: 50
+  };
+  
+  var systemProfileQuery = [
+    getMatchCollectionName(req),
+    filterOutInsertObjects,
+    group,
+    sort,
+    limit
+  ];
 
-//   systemProfile
-//     .aggregate(
-//       [
-//         {
-//           $group: {
-//             _id: {'ns':'$ns', 'op':'$op'},
-//             maxMillis: { $max: '$millis' },
-//             avgMillis: { $avg: "$millis" },
-//             minMillis: { $min: "$millis" },
-//             count: { $sum: 1 },
-//           }
-//         }
-//       ]
-//     )
-//     .exec(function(err, result) {
-//       if (err) {
-//         console.log('ERROR',err);
-//       }
-//       res.send(result);
-//     });
-
-// });
-
-// router.get('/collection/:collection_name/operation', function(req, res, next) {
-
-//   systemProfile
-//     .aggregate(
-//       [
-//         { 
-//           $match: { 
-//             ns: { 
-//               $eq: req.params.collection_name
-//             }
-//           }
-//         },
-//         {
-//           $group: {
-//             _id: {'op':'$op', 'query':'$query', 'updateobj':'$updateobj'},
-//             maxMillis: { $max: '$millis' },
-//             avgMillis: { $avg: "$millis" },
-//             minMillis: { $min: "$millis" },
-//             count: { $sum: 1 },
-//           }
-//         },
-//         {
-//           $sort: {
-//             avgMillis: -1
-//           }
-//         },
-//         {
-//           $limit: 50
-//         }
-//       ]
-//     )
-//     .exec(function(err, result) {
-//       if (err) {
-//         console.log('ERROR',err);
-//       }
-//       res.send(result);
-//     });
-
-// });
-
-router.get('/operationtime/:collection_name', function(req, res, next) {
-
-  systemProfile
-    .aggregate(
-      [
-        { 
-          $match: { 
-            ns: { 
-              $eq: req.params.collection_name
-            }
-          }
-        },
-        {
-          $project: {
-            op: 1,
-            millis: 1,
-            query: {
-              $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
-            }
-          }
-        },
-        {
-          $group: {
-            _id: {'op':'$op', 'query':'$query'},
-            maxMillis: { $max: '$millis' },
-            avgMillis: { $avg: "$millis" },
-            minMillis: { $min: "$millis" },
-            count: { $sum: 1 },
-          }
-        },
-        {
-          $sort: {
-            avgMillis: -1
-          }
-        },
-        {
-          $limit: 50
-        }
-      ]
-    )
-    .exec(function(err, result) {
+  systemProfile.aggregate(systemProfileQuery)
+      .exec(function(err, result) {
       if (err) {
-        console.log('ERROR',err);
+        console.error('ERROR',err);
       }
       res.send(result);
     });
-
 });
 
-router.get('/operationcount/:collection_name', function(req, res, next) {
+router.get('/operation/:collection_name/recent', function(req, res, next) {
+
+  var groupIntoDays = {
+    $group : {
+      _id: {
+        op : '$op',
+        // query: '$query',
+        year : { $year : "$ts" },        
+        month : { $month : "$ts" },        
+        day : { $dayOfMonth : "$ts" }
+      },
+      maxMillis: { $max: '$millis' },
+      avgMillis: { $avg: "$millis" },
+      minMillis: { $min: "$millis" },
+      count: { $sum: 1 }
+    }
+  };
+
+  var sortByDate = {
+      $sort: {
+        '_id.year': -1,
+        '_id.month': -1,
+        '_id.day': -1
+      }
+  };
+
+  var operationsGroupedByTimeQuery = [
+    getMatchCollectionName(req),
+    filterOutInsertObjects,
+    groupIntoDays,
+    sortByDate
+  ];
 
   systemProfile
-    .aggregate(
-      [
-        { 
-          $match: { 
-            ns: { 
-              $eq: req.params.collection_name
-            }
-          }
-        },
-        {
-          $project: {
-            op: 1,
-            millis: 1,
-            query: {
-              $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
-            }
-          }
-        },
-        {
-          $group: {
-            _id: {'op':'$op', 'query':'$query'},
-            maxMillis: { $max: '$millis' },
-            avgMillis: { $avg: "$millis" },
-            minMillis: { $min: "$millis" },
-            count: { $sum: 1 },
-          }
-        },
-        {
-          $sort: {
-            count: -1
-          }
-        },
-        {
-          $limit: 50
-        }
-      ]
-    )
+    .aggregate(operationsGroupedByTimeQuery)
     .exec(function(err, result) {
       if (err) {
-        console.log('ERROR',err);
+        console.error('ERROR',err);
       }
-      res.send(result);
-    });
-
-});
-
-router.get('/lastoperations/count/:collection_name', function(req, res, next) {
-
-  systemProfile
-    .aggregate(
-      [
-        { 
-          $match: { 
-            ns: { 
-              $eq: req.params.collection_name
-            }
-          }
-        },
-        {
-          $project: {
-            op: 1,
-            millis: 1,
-            ts: 1,
-            query: {
-              $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'yay', else: '$query' }
-            }
-          }
-        },
-        {
-          $group : {
-            _id: {
-              op : '$op',
-              // query: '$query',
-              year : { $year : "$ts" },        
-              month : { $month : "$ts" },        
-              day : { $dayOfMonth : "$ts" }
-            },
-            maxMillis: { $max: '$millis' },
-            avgMillis: { $avg: "$millis" },
-            minMillis: { $min: "$millis" },
-            count: { $sum: 1 }
-          }
-        },
-        {
-          $sort: {
-            '_id.year': -1,
-            '_id.month': -1,
-            '_id.day': -1
-          }
-        // },
-        // {
-        //   $limit: 3
-        }
-      ]
-    )
-    .exec(function(err, result) {
-      if (err) {
-        console.log('ERROR',err);
-      }
-      console.log('RESULT', result);
       res.send(result);
     });
 
