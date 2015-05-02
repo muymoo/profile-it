@@ -5,14 +5,31 @@ profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', fun
     };
     $scope.progress.value = 0;
 
+    $scope.queries = {
+        findWI: true,
+        findWIMultiple: false
+    }
+
 	$scope.profile = function() {
         $scope.result.flamegraph = null;
         $scope.progress.value = 30;
         $scope.progress.state = 'Profiling...';
 
         console.log("Profiling...");
+
+        var queriesToRun = '';
+        var queryKey = 'queries='
+
+        for(var query in $scope.queries) {
+            if($scope.queries[query]) {
+                queriesToRun += queryKey;
+                queriesToRun += query;
+                queryKey = '&queries=';
+            }
+        }
+
 		// Yes, this should be a service...
-		$http.get('/profiler/profile?queries=findWI').success(function(data) {
+		$http.get('/profiler/profile?' + queriesToRun).success(function(data) {
 			$scope.result = data;
             $scope.progress.value = 100;
             $scope.progress.state = 'Done ' + data.duration + 's';

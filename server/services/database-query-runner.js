@@ -33,21 +33,21 @@ queryRunner.addToDatabase = function(items) {
 	});
 }
 
-queryRunner.findWIInDatabase = function() {
-	console.info('Searching database for WI...');
-	
+queryRunner.findWIMultipleTimes = function() {
 	var i = 0;
-	
-	while(i < 10) {
-		zip.find({ state: 'WI' }, function(err, all){
-	        console.info('Found ' + all.length + ' items without an index.');
-		});
-		zipWithIndex.find({ state: 'WI' }, function(err, all){
-	        console.info('Found ' + all.length + ' items with an index.');
-		});
+	while(i < 10) {	
+		queryRunner.findWIInDatabase();
 		i++;
 	}
+}
 
+queryRunner.findWIInDatabase = function() {
+	zip.find({ state: 'WI' }, function(err, all){
+        console.info('Found ' + all.length + ' items without an index.');
+	});
+	zipWithIndex.find({ state: 'WI' }, function(err, all){
+        console.info('Found ' + all.length + ' items with an index.');
+	});
 }
 
 queryRunner.addInitialZipCodes = function() {
@@ -78,12 +78,13 @@ queryRunner.addUpPopulation = function() {
 
 var allQueries = {
 	findWI: queryRunner.findWIInDatabase,
+	findWIMultiple: queryRunner.findWIMultipleTimes,
 	addMore: queryRunner.addMoreZipCodes
 }
 
 queryRunner.runQueries = function(queriesToRun) {
 	var query;
-	
+
 	queriesToRun.forEach(function(queryToRun) {
 		query = allQueries[queryToRun];
 		query();
