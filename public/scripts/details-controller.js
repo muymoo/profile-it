@@ -1,78 +1,29 @@
-profilerApp.controller('DetailsController', ['$scope', '$http', '$stateParams', '$state', function($scope, $http, $stateParams, $state) {
+profilerApp.controller('DetailsController', function($scope, $http, $stateParams, $state, DetailsService) {
 
 	$scope.collection = $stateParams.collection;
 	$scope.operation = $stateParams.operation;
 	$scope.query = $stateParams.query;
-	console.log($scope.collection, $scope.operation, $scope.query);
 
-	$scope.detailsOperationInstanceData = [];
-	$scope.detailsOperationInstance = { data: 'detailsOperationInstanceData' };
-	$http.post('/stats/collection/' + $scope.collection + '/operation', {operation: $scope.operation, query: $scope.query}).success(function(result) {
-		console.log(result);
-
-		var categories = [];
-		var nScannedSeries = [{
-			name: 'Number documents scanned',
-			data: []
-		},{
-			name: 'Number documents scanned in index',
-			data: []
-		},{
-			name: 'Number documents returned',
-			data: []
-		}];
-
-		var responseLengthSeries = [{
-			name: 'Response Length',
-			data: []
-		}];
-
-		var queryTimeSeries = [{
-			name: 'Time to complete query',
-			data: []
-		}];
-
-		for(var index in result) {
-			var item = result[index];
-
-			var categoryString = item.ts;
-						
-			categories.push(categoryString);
-			nScannedSeries[0].data.push(item.nscannedObjects);
-			nScannedSeries[1].data.push(item.nscanned);
-			nScannedSeries[2].data.push(item.nreturned); // could also do ntoskip (also expensive?)  // ntoreturn --> shows if have limit (if 0 no limit)
-			responseLengthSeries[0].data.push(item.responseLength);
-			queryTimeSeries[0].data.push(item.millis);
-
-			// TODO scanAndOrder if can't use index to return order.. must resort
-
-			// (ninserted, ndeleted, nMatched, nModified)
-
-			// keyUpdates
-
-			// writeConflicts
-
-			// numYield
-
-			// locks (acquireCount, acquireWaitCount, timeAcquiringMicros, deadlockCount)
-
-		}
+	DetailsService.fetchDetails($scope.collection, $scope.operation, $scope.query).then(function(result) {
 
 		$scope.nscanned = {
-			series: nScannedSeries,
-			categories: categories
+			series: result.nScannedSeries,
+			categories: result.categories
 		};
+
 		$scope.responseLength = {
-			series: responseLengthSeries,
-			categories: categories
-		}
+			series: result.responseLengthSeries,
+			categories: result.categories
+		};
+		
 		$scope.queryTime = {
-			series: queryTimeSeries,
-			categories: categories
-		}
+			series: result.queryTimeSeries,
+			categories: result.categories
+		};
+
 	});
 
 	$scope.up = function() {
 		$state.go('home');
 	};
-}]);
+});
