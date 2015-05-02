@@ -7,7 +7,7 @@ profilerApp.controller('DetailsController', ['$scope', '$http', '$stateParams', 
 
 	$scope.detailsOperationInstanceData = [];
 	$scope.detailsOperationInstance = { data: 'detailsOperationInstanceData' };
-	$http.post('/stats/collection/' + collection + '/operation/id', {operation: operation, obj: obj}).success(function(result) {
+	$http.post('/stats/collection/' + collection + '/operation', {operation: operation, obj: obj}).success(function(result) {
 		console.log(result);
 		for(var index in result) {
 			var item = result[index];

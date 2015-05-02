@@ -47,8 +47,8 @@ var getZipCodes = function() {
 var addToDatabase = function(items) {
 	console.info('Adding ' + items.length + ' zip codes to database...');
 
-	connection.db.dropCollection('zips');
-	connection.db.dropCollection('zipwithindexes');
+	// connection.db.dropCollection('zips');
+	// connection.db.dropCollection('zipwithindexes');
 	
 	// Create a bunch of items
 	var promise = zip.create(
@@ -70,10 +70,15 @@ var addToDatabase = function(items) {
 
 var findAllInDatabase = function() {
 	console.info('Searching database for WI...');
-
-	zip.find({ state: 'WI' }, function(err, all){
-        console.info('Found ' + all.length + ' items without an index.');
-	});
+	
+	var i = 0;
+	
+	while(i < 10) {
+		zip.find({ state: 'WI' }, function(err, all){
+	        console.info('Found ' + all.length + ' items without an index.');
+		});
+		i++;
+	}
 
 	zipWithIndex.find({ state: 'WI' }, function(err, all){
         console.info('Found ' + all.length + ' items with an index.');
@@ -82,7 +87,7 @@ var findAllInDatabase = function() {
 
 var runDbTests = function() {
 	getZipCodes()
-		.then(addToDatabase)
+		//.then(addToDatabase)
 		.then(findAllInDatabase);
 };
 
