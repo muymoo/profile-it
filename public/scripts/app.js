@@ -4,20 +4,20 @@ var profilerApp = angular.module('profilerApp',['ngGrid', 'ui.bootstrap', 'ui.ro
 
 profilerApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-    .state('try2', {
+    .state('home', {
       url: "/",
-      templateUrl: "views/try2.html",
-      controller: "Try2Controller"
+      templateUrl: "views/home.html",
+      controller: "HomeController"
     })    
-    .state('zoom2', {
-      url: "/zoom2?collection&operation&obj",
-      templateUrl: "views/zoom2.html",
-      controller: "Zoom2Controller"
+    .state('details', {
+      url: "/details?collection&operation&obj",
+      templateUrl: "views/details.html",
+      controller: "DetailsController"
     })
-    .state('zoom3', {
-      url: "/zoom3",
-      templateUrl: "views/zoom3.html",
-      controller: "Zoom3Controller"
+    .state('profiler', {
+      url: "/profiler",
+      templateUrl: "views/profiler.html",
+      controller: "ProfilerController"
     });
 
     $urlRouterProvider.otherwise("/");

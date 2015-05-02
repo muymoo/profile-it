@@ -1,4 +1,4 @@
-profilerApp.controller('Zoom2Controller', ['$scope', '$http', '$stateParams', '$state', function($scope, $http, $stateParams, $state) {
+profilerApp.controller('DetailsController', ['$scope', '$http', '$stateParams', '$state', function($scope, $http, $stateParams, $state) {
 	
 	var collection = $stateParams.collection;
 	var operation = $stateParams.operation;
@@ -26,6 +26,6 @@ profilerApp.controller('Zoom2Controller', ['$scope', '$http', '$stateParams', '$
 	});
 
 	$scope.up = function() {
-		$state.go('try2');
+		$state.go('home');
 	};
 }]);

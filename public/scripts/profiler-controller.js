@@ -1,4 +1,4 @@
-profilerApp.controller('Zoom3Controller', ['$scope', '$http', '$timeout', function($scope, $http, $timeout){
+profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout){
     $scope.progress = {};
     $scope.result = {
         flamegraph: 'target/last.svg'
@@ -12,7 +12,7 @@ profilerApp.controller('Zoom3Controller', ['$scope', '$http', '$timeout', functi
 
         console.log("Profiling...");
 		// Yes, this should be a service...
-		$http.get('/runs/profile').success(function(data) {
+		$http.get('/profiler/profile').success(function(data) {
 			$scope.result = data;
             $scope.progress.value = 100;
             $scope.progress.state = 'Done ' + data.duration + 's';
@@ -30,6 +30,6 @@ profilerApp.controller('Zoom3Controller', ['$scope', '$http', '$timeout', functi
         }
 
         $timeout(parsing, 8000);
-        $timeout(generatingzSvg, 9000);
+        $timeout(generatingSvg, 15000);
 	};
 }]);

@@ -1,4 +1,4 @@
-profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinnerService, $q, $state) {
+profilerApp.controller('HomeController', function($scope, StatsService, usSpinnerService, $q, $state) {
 
 	$scope.collections = [];
 	$scope.selectedCollection = $scope.collections[0];
@@ -47,7 +47,7 @@ profilerApp.controller('Try2Controller', function($scope, StatsService, usSpinne
 			console.log(split);
 		}
 
-		$state.go('zoom2', params);
+		$state.go('details', params);
 	});
 	
 	function updateOperationsByTime(collection) {

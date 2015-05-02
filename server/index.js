@@ -9,8 +9,7 @@ var mongoose = require('mongoose');
 // Connect to local mongodb
 mongoose.connect('mongodb://localhost/my_database');
 
-// Depend on our runs controller
-var runs = require('./controllers/runs');
+var profile = require('./controllers/profile');
 var stats = require('./controllers/stats');
 
 // Basic setup
@@ -26,7 +25,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, '../bower_components')));
 
 // API routes 
-app.use('/runs', runs);
+app.use('/profiler', profile);
 app.use('/stats', stats);
 
 // catch 404 and forward to error handler

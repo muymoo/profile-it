@@ -11,7 +11,7 @@ var mongoose = require('mongoose');
 var zipWithIndex = mongoose.model('ZipWithIndex');
 var zip = mongoose.model('Zip');
 var connection = mongoose.connection;
-connection.setProfiling(0, function (err, doc) {
+connection.setProfiling(2, function (err, doc) {
     console.error(err, doc);
 });
 
