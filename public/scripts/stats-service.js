@@ -1,28 +1,26 @@
 profilerApp.factory('StatsService', function($http, $q) {
 
-	var splitCharacter = ' - '; // use this to split the operation from the insert/updateobj for user readable data
+	var splitCharacter = ' - '; // use this to split the operation from the query object for user readability
 
 	function makeCategoryString(obj) {
 		var categoryString = obj.op;
 		if(obj.query !== undefined) {
 			categoryString += splitCharacter + JSON.stringify(obj.query);
 		}
-		if(obj.updateobj !== undefined) {
-			categoryString += splitCharacter + JSON.stringify(obj.updateobj);
-		}
 		return categoryString;
 	}
 
 	var getDetailsParams = function(collection, userReadableOperationQuery) {
 		var operationAndQuery = userReadableOperationQuery.split(splitCharacter);
+		var operation = operationAndQuery[0];
 
 		var params = {
 			collection: collection, 
-			operation: operationAndQuery[0]
+			operation: operation
 		};
 
 		if(operationAndQuery.length > 1) {
-			params['obj'] = operationAndQuery[1];
+			params['query'] = operationAndQuery[1];
 		}
 
 		return params;

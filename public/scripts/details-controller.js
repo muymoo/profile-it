@@ -2,12 +2,12 @@ profilerApp.controller('DetailsController', ['$scope', '$http', '$stateParams', 
 
 	$scope.collection = $stateParams.collection;
 	$scope.operation = $stateParams.operation;
-	$scope.obj = $stateParams.obj;
-	console.log($scope.collection, $scope.operation, $scope.obj);
+	$scope.query = $stateParams.query;
+	console.log($scope.collection, $scope.operation, $scope.query);
 
 	$scope.detailsOperationInstanceData = [];
 	$scope.detailsOperationInstance = { data: 'detailsOperationInstanceData' };
-	$http.post('/stats/collection/' + $scope.collection + '/operation', {operation: $scope.operation, obj: $scope.obj}).success(function(result) {
+	$http.post('/stats/collection/' + $scope.collection + '/operation', {operation: $scope.operation, query: $scope.query}).success(function(result) {
 		console.log(result);
 
 		var categories = [];

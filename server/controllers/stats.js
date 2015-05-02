@@ -139,48 +139,15 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
 router.post('/collection/:collection_name/operation', function(req, res, next) {
 
   var operation = req.body.operation;
-  var obj = req.body.obj;
-    // var parsed = JSON.parse(obj);
+  var query = req.body.query;
 
   var systemProfileQuery = {
     ns: req.params.collection_name,
     op: operation
-    // query: parsed
   };
 
-  if(obj) {
-    // var parsed = JSON.parse(obj);
-
-    systemProfileQuery['$where'] = 'tojson(this.query) === tojson(' + obj + ')';
-    // systemProfileQuery['$where'] = 'hex_md5(this.query) === hex_md5(' + obj + ')'; need strings
-    // obj is def an object
-    // this.query is def an object 'isObject(this.query)';//(this.query) == ' + obj;print(this.query); 
-
-    // var querystr = '';
-    // var firsttime = true;
-    // for(str in parsed) {
-    //   if(firsttime) {
-    //     firsttime = false;
-    //   }
-    //   else {
-    //     querystr += '&&';
-    //   }
-    //   querystr += 'this.query.' + str + ' === "' + parsed[str] + '"';
-    // }
-
-    // if(querystr !== '') {
-    //   systemProfileQuery['$where'] = querystr; //.tojson()
-    // }
-
-
-
-
-    // function() {
-    //   return this.query.state === ('' + xyz);
-    // }
-    //JSON.stringify(this.query) + " === " + parsed;
-    // db.myCollection.find( "this.credits == this.debits || this.credits > this.debits" );
-    // db.myCollection.find( function() { return (this.credits == this.debits || this.credits > this.debits ) } );
+  if(query) {
+    systemProfileQuery['$where'] = 'tojson(this.query) === tojson(' + query + ')';
   }
 
   console.log("Sys Profile Query: ", systemProfileQuery);

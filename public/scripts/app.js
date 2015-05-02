@@ -10,7 +10,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       controller: "HomeController"
     })    
     .state('details', {
-      url: "/details?collection&operation&obj",
+      url: "/details?collection&operation&query",
       templateUrl: "views/details.html",
       controller: "DetailsController"
     })
