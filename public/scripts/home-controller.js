@@ -2,80 +2,70 @@ profilerApp.controller('HomeController', function($scope, StatsService, usSpinne
 
 	$scope.collections = [];
 	$scope.selectedCollection = $scope.collections[0];
-	$scope.$watch('collections', function(newData) {
-		$scope.selectedCollection = $scope.collections[0];
-	});
 
 	StatsService.getAllCollections().then(function(collections) {
 		$scope.collections = collections;
 	});
 
-	$scope.$watch('selectedCollection', function(newData) {
+	$scope.$watch('collections', function(newData) {
+		$scope.selectedCollection = $scope.collections[0];
+	});
+
+	$scope.$watch('selectedCollection', updateAllCharts);
+
+	$scope.$on('select-bar', function(event, bar) {
+		$state.go('details', StatsService.getDetailsParams($scope.selectedCollection, bar));
+	});
+
+	function updateAllCharts(newData) {
 
 		if(newData == undefined) {
 			return;
 		}
 
 		usSpinnerService.spin('myspinner');
+
 		$q.all([
-			updateOperationsByTime(newData), 
-			updateOperationsByCount(newData),
-			updateOperationsCountOverTime(newData),
-			updateOperationsMillisOverTime(newData)
-			]).then(function() {
-			usSpinnerService.stop('myspinner');
-		});
-	});
+			updateOperationsByTime(), 
+			updateOperationsByCount(),
+			updateOperationsCountOverTime(),
+			updateOperationsMillisOverTime()
+			])
+			.then(function() {
+				usSpinnerService.stop('myspinner');
+			});
+	}
 
-	$scope.$on('select-bar', function(event, x) {
-		var split = x.split(splitCharacter);
-
-		var params = {
-			collection: $scope.selectedCollection, 
-			operation: split[0]
-		};
-
-		if(split.length > 1) {
-			params['obj']=split[1];
-		}
-		if(split.length > 2) {
-			alert('ruh roh');
-			console.log(split);
-		}
-
-		$state.go('details', params);
-	});
-	
-	function updateOperationsByTime(collection) {
+	function updateOperationsByTime() {
 		var defer = $q.defer();
-		StatsService.topOperationsByTime(collection).then(function(seriesAndCategories) {
+		StatsService.topOperationsByTime($scope.selectedCollection).then(function(seriesAndCategories) {
 			$scope.timeOperations = seriesAndCategories;
 			defer.resolve();
 		});
 		return defer.promise;
 	}
 
-	function updateOperationsByCount(collection) {
+	function updateOperationsByCount() {
 		var defer = $q.defer();
-		StatsService.topOperationsByCount(collection).then(function(seriesAndCategories) {
+		StatsService.topOperationsByCount($scope.selectedCollection).then(function(seriesAndCategories) {
 			$scope.countOperations = seriesAndCategories;
 			defer.resolve();
 		});
 		return defer.promise;
 	}
 
-	function updateOperationsCountOverTime(collection) {
+	function updateOperationsCountOverTime() {
 		var defer = $q.defer();
-		StatsService.operationsCountOverTime(collection).then(function(series) {
+		StatsService.operationsCountOverTime($scope.selectedCollection).then(function(series) {
 			$scope.countOverTime = series;
 			defer.resolve();
 		});
 		return defer.promise;
 	}
 
-	function updateOperationsMillisOverTime(collection) {
+	function updateOperationsMillisOverTime() {
 		var defer = $q.defer();
-		StatsService.operationsMillisOverTime(collection).then(function(series) {
+		StatsService.operationsMillisOverTime($scope.selectedCollection).then(function(series) {
 			$scope.millisOverTime = series;
 			defer.resolve();
 		});

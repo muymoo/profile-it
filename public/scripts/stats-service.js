@@ -13,6 +13,21 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return categoryString;
 	}
 
+	var getDetailsParams = function(collection, userReadableOperationQuery) {
+		var operationAndQuery = userReadableOperationQuery.split(splitCharacter);
+
+		var params = {
+			collection: collection, 
+			operation: operationAndQuery[0]
+		};
+
+		if(operationAndQuery.length > 1) {
+			params['obj'] = operationAndQuery[1];
+		}
+
+		return params;
+	}
+
 	var get = function(url) {
 		var deferred = $q.defer();
 		$http.get(url).success(function(result) {
@@ -143,6 +158,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 	}
 
 	return {
+		getDetailsParams: getDetailsParams,
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,
 		getAllCollections: getAllCollections,
