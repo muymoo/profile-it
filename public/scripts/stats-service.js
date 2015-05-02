@@ -93,30 +93,37 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return defer.promise;
 	};
 
+	var makeTimeBasedSeries = function(factor, result) {
+		var pointsForEachSeries = {};
+
+		for(var index in result) {
+			var item = result[index];
+			var seriesName = item._id.op;
+
+			if(pointsForEachSeries[seriesName] == undefined) {
+				pointsForEachSeries[seriesName] = [];
+			}
+
+			var x = Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1);
+			var y = item[factor];
+			pointsForEachSeries[seriesName].push([x, y]);
+		}
+
+		var series = [];
+		for(seriesName in pointsForEachSeries) {
+			series.push({
+				name: seriesName,
+				data: pointsForEachSeries[seriesName].reverse() // reverse so in increasing order for highcharts
+			});
+		}
+
+		return series;
+	}
+
 	var operationsCountOverTime = function(collection) {
 		var defer = $q.defer();
 		get('/stats/operation/' + collection + '/recent').then(function(result) {
-			var seriesObjs = {};
-
-			for(var index in result) {
-				var item = result[index];
-						
-				var seriesName = item._id.op;
-				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
-					seriesObjs[seriesName] = [];
-				}
-
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.count]);
-			}
-
-			var series = [];
-			for(obj in seriesObjs) {
-				series.push({
-					name: obj,
-					data: seriesObjs[obj].reverse()
-				});
-			}
-
+			var series = makeTimeBasedSeries('count', result);
 			defer.resolve({
 				series: series
 			});
@@ -127,28 +134,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 	var operationsMillisOverTime = function(collection) {
 		var defer = $q.defer();
 		get('/stats/operation/' + collection + '/recent').then(function(result) {
-
-			var seriesObjs = {};
-
-			for(var index in result) {
-				var item = result[index];
-						
-				var seriesName = item._id.op;
-				if(seriesObjs[seriesName] == undefined) { 	// var categoryString = makeCategoryString(item._id);
-					seriesObjs[seriesName] = [];
-				}
-				
-				seriesObjs[seriesName].push([Date.UTC(item._id.year, item._id.month - 1, item._id.day, item._id.hour - 1, item._id.minute -1), item.avgMillis]);
-			}
-
-			var series = [];
-			for(obj in seriesObjs) {
-				series.push({
-					name: obj,
-					data: seriesObjs[obj].reverse()
-				});
-			}
-
+			var series = makeTimeBasedSeries('avgMillis', result);
 			defer.resolve({
 				series: series
 			});
