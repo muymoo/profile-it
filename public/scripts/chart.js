@@ -23,8 +23,7 @@ profilerApp.directive('chart', function() {
 			var config = {
 		        chart: {
 		        	renderTo: element[0],
-		            type: scope.type,
-		            zoomType: 'xy'
+		            type: scope.type
 		        },
 		        title: {
 		            text: scope.title

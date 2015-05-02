@@ -22,3 +22,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise("/");
 });
+
+profilerApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
+    usSpinnerConfigProvider.setDefaults({top: '10%'});
+}]);

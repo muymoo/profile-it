@@ -27,7 +27,7 @@
     </nav>
     <div class="container-fluid" ng-controller="MainController">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div class="col-sm-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li ui-sref-active="active"><a ui-sref="home">Home</a></li>
                     <li ui-sref-active="active"><a ui-sref="profiler">Profiler</a></li>
@@ -36,12 +36,10 @@
                     <a href="#" ng-click="populate()">{{ populateText }}</a>
                 </div>
             </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-sm-10 col-sm-offset-2 main">
                 <div ui-view></div>
             </div>
         </div>
-
-    
     </div>
 
     <script src="bower_components/angular/angular.js"></script>

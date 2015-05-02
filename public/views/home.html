@@ -1,17 +1,20 @@
 <div class="row">
-	<div class="radio" ng-repeat="collection in collections">
-  		<label>
-    		<input type="radio" name="collectionRadios" ng-value="collection" ng-model="$parent.selectedCollection">{{collection}}
-    	</label>
-	</div>
-</div>
-<div class="row">
-	<div col="col-sm-12">
-		<h3>{{selectedCollection}}</h3>
+	<div class="col-sm-3">
+		<div class="panel panel-default">
+  			<div class="panel-heading">
+    			<h3 class="panel-title">Select a Collection</h3>
+  			</div>
+ 			<div class="panel-body">
+				<div class="radio" ng-repeat="collection in collections">
+  					<label>
+			    		<input type="radio" name="collectionRadios" ng-value="collection" ng-model="$parent.selectedCollection">{{collection}}
+			    	</label>
+				</div>  
+			</div>
+  			<div class="panel-footer">Click point on graph to see more details.</div>
+		</div>
 	</div>
 	<span us-spinner spinner-key="myspinner"></span>
-</div>
-<div class="row">
 	<div class="col-sm-12">
 		<chart 
 			title="Time to complete operations" 
@@ -19,7 +22,7 @@
 			series-and-categories="timeOperations">
 		</chart>
 	</div>
-		<div class="col-sm-12">
+	<div class="col-sm-12">
 		<chart 
 			title="Most popular operations" 
 			y-axis-title="Count" 
