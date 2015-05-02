@@ -1,5 +1,35 @@
 <button class="btn" ng-click="up()">Up</button>
 <div class="row">
-	<h3>Details for each instance of a specific operation</h3>
-	<div class="gridStyle" ng-grid="detailsOperationInstance"></div>
+
+	<div class="col-sm-12">
+		<h4>{{collection}} {{operation}} {{obj}}</h4>
+	</div>
+
+	<div class="col-sm-10">
+		<chart 
+			title="Number of Documents Scanned" 
+			y-axis-title="" 
+			series-and-categories="nscanned">
+		</chart>
+	</div>
+	<div class="col-sm-2">Protip: If scanning many more documents than are returned, the database is scanning many objects to find the target objects. Consider creating an index.</div>
+
+	<div class="col-sm-10">
+		<chart 
+			title="Response Length" 
+			y-axis-title="" 
+			series-and-categories="responseLength">
+		</chart>
+	</div>
+	<div class="col-sm-2">Protip: A large response length can affect performance - try using projections and limits to decrease it.</div>
+
+	<div class="col-sm-10">
+		<chart 
+			title="Query Time" 
+			y-axis-title="" 
+			series-and-categories="queryTime">
+		</chart>
+	</div>
+	<div class="col-sm-2"></div>
+
 </div>
