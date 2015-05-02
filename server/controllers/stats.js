@@ -139,7 +139,7 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
 router.post('/collection/:collection_name/operation', function(req, res, next) {
 
   var operation = req.body.operation;
-  var obj = req.body.obj;  // TODO at the moment only have query objs, so hardcoding - need to include updateobjs!!
+  var obj = req.body.obj;
 
   var systemProfileQuery = {
     ns: req.params.collection_name,
@@ -148,12 +148,33 @@ router.post('/collection/:collection_name/operation', function(req, res, next) {
 
   if(obj) {
     var parsed = JSON.parse(obj);
-    systemProfileQuery['$where'] = "this.query && this.query.state && this.query.state === '" + parsed.state  + "'"
+    var querystr = '';
+    var firsttime = true;
+    for(str in parsed) {
+      if(firsttime) {
+        firsttime = false;
+      }
+      else {
+        querystr += '&&';
+      }
+      querystr += 'this.query.' + str + ' === "' + parsed[str] + '"';
+    }
+
+    systemProfileQuery['$where'] = querystr; //.tojson()
+    // function() {
+    //   return this.query.state === ('' + xyz);
+    // }
+    //JSON.stringify(this.query) + " === " + parsed;
+    // db.myCollection.find( "this.credits == this.debits || this.credits > this.debits" );
+    // db.myCollection.find( function() { return (this.credits == this.debits || this.credits > this.debits ) } );
   }
+
+  console.log("Sys Profile Query: ", systemProfileQuery);
 
   systemProfile
       .find(systemProfileQuery)
       .exec(function(err, result) {
+        console.log(result);
         if(err) {
           console.log(err);
         }

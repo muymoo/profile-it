@@ -56,18 +56,6 @@ profilerApp.controller('DetailsController', ['$scope', '$http', '$stateParams', 
 
 			// locks (acquireCount, acquireWaitCount, timeAcquiringMicros, deadlockCount)
 
-
-			$scope.detailsOperationInstanceData.push(
-				{
-					'Operation': item.op,
-					'Query': item.query,
-					'Update': item.updateobj,
-					'Millis': item.millis,
-					'Lock Stats': item.lockStats,
-					'Number Scanned': item.nscanned,
-					'Response Length': item.responseLength,
-				}
-			);
 		}
 
 		$scope.nscanned = {
