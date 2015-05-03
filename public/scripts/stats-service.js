@@ -111,7 +111,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 
 		for(var index in result) {
 			var item = result[index];
-			var seriesName = item._id.op;
+			var seriesName = makeCategoryString(item._id);
 
 			if(pointsForEachSeries[seriesName] == undefined) {
 				pointsForEachSeries[seriesName] = [];

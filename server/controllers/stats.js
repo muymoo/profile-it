@@ -39,6 +39,11 @@ router.get('/collection', function(req, res, next) {
           $group: {
             _id: {'ns':'$ns'}
           }
+        },
+        {
+          $sort: {
+            '_id.ns': -1
+          }
         }
       ]
     )
@@ -94,7 +99,7 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
     $group : {
       _id: {
         op : '$op',
-        // query: '$query',
+        query: '$query',
         year : { $year : "$ts" },        
         month : { $month : "$ts" },        
         day : { $dayOfMonth : "$ts" },
