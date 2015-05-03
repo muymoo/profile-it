@@ -1,4 +1,4 @@
-profilerApp.controller('MainController', ['$scope', '$http', function($scope, $http){
+profilerApp.controller('MainController', function($scope, $http, $state) {
 	
 	$scope.populateText = "Populate Database";
 
@@ -6,5 +6,12 @@ profilerApp.controller('MainController', ['$scope', '$http', function($scope, $h
 		$http.get('/profiler/populate').success(function(data) {
 			$scope.populateText = "Success!";
 		});
-	}
-}]);
+	};
+
+	$scope.isActive = function() {
+		if($state.current.name === 'home' || $state.current.name === 'home.collection' || $state.current.name === 'details') {
+			return true;
+		}
+		return false;
+	};
+});

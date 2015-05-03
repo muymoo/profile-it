@@ -6,7 +6,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       abstract: true,
-      url: "/",
+      url: "/home",
       templateUrl: "views/home.html",
       controller: "HomeController"
     })   
@@ -24,7 +24,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       controller: "ProfilerController"
     });
 
-    $urlRouterProvider.otherwise("/");
+    $urlRouterProvider.otherwise("/home");
 });
 
 profilerApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
