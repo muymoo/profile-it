@@ -1,5 +1,5 @@
-<h1 class="page-header">Rerun Similar Query</h1>
-<p>Click the profile button to "rerun that query" (that aspect not working yet) and analyze it at a very low level</p>
+<h1 class="page-header">Profile Queries</h1>
+<p>Select queries and click the "Run Profiler" button to generate a low-level flame graph of Mongo DB function calls.</p>
 
 <div class="row">
     <div class="col-lg-6">
@@ -11,6 +11,10 @@
         <label class="checkbox">
             <input type="checkbox" ng-model="queries.findWIMultiple">
             Find All Zip Codes in WI (loop 10 times)
+        </label>
+        <label class="checkbox">
+            <input type="checkbox" ng-model="queries.findRange">
+            Find All Zip Codes between 20000 and 50000
         </label>
         <label class="checkbox">
             <input type="checkbox" ng-model="queries.addMore">

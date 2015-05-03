@@ -65,8 +65,26 @@ var updateZipCodes = function() {
 
 }
 
-var findARangeOfZipCodes = function() {
+var findRangeOfZipCodes = function() {
+	zip.find({
+		_id: {
+				$gt: 20000,
+				$lt: 50000
+			}
+		}, function(err, all) {
+			console.info('Found ' + all.length + ' zip codes between 20000 and 50000.');
+		}
+	);
 
+	zipWithIndex.find({
+		_id: {
+				$gt: 20000,
+				$lt: 50000
+			}
+		}, function(err, all) {
+			console.info('Found ' + all.length + ' zip codes (indexed) between 20000 and 50000.');
+		}
+	);
 }
 
 var findZipCodesInLatLon = function() {
@@ -80,6 +98,7 @@ var addUpPopulation = function() {
 var allQueries = {
 	findWI: findWIInDatabase,
 	findWIMultiple: findWIMultipleTimes,
+	findRange: findRangeOfZipCodes,
 	addMore: addMoreZipCodes
 }
 
