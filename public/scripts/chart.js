@@ -89,7 +89,7 @@ profilerApp.directive('chart', function() {
 
 			    	scope.chart.reflow();
 			    }
-		    });
+		    }, true);
 		}
 	};
 });

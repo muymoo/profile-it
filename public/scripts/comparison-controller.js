@@ -7,6 +7,14 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 	$scope.allOperations = [];
 	$scope.selectedOperations = [];
 
+	$scope.nscanned = {
+		series: [{
+			name: 'Number documents scanned in index',
+			data: []
+		}],
+		categories: []
+	};
+
 	StatsService.getAllCollections().then(function(collections) {
 		$scope.allCollections = collections;
 	});
@@ -24,42 +32,6 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 				$scope.allOperationsForCollections[newSelectedCollections[i]] = newOperations;
 			});
 		}
-
-	}, true);
-
-	$scope.$watch('selectedOperations', function(newSelectedOperations) {
-
-		if(newSelectedOperations.length === 0) {
-			$scope.nscanned = {};
-			return;
-		}
-
-		console.log(newSelectedOperations);
-
-		var obj = StatsService.getDetailsParams($scope.selectedCollections[0], $scope.selectedOperations[0]);
-		console.log(obj);
-
-		DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
-
-			// can't figure out how to do this aggregation server-side becuase we can't use $where with $match... 
-			// so for now, trying client-side
-
-			var nScannedForEachInstanceOfThisQuery = result.nScanned;
-			var total = 0;
-			for(var i in nScannedForEachInstanceOfThisQuery) {
-				total += nScannedForEachInstanceOfThisQuery[i];
-			}
-			console.log(total);
-
-			$scope.nscanned = {
-				series: [{
-					name: 'Number documents scanned in index',
-					data: [total]
-				}],
-				categories: obj.operation + ' - ' + obj.query
-			};
-
-		});
 
 	}, true);
 
@@ -93,9 +65,27 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 		var currentIndex = $scope.selectedOperations.indexOf(operation);
 		if(currentIndex > -1) {
 			$scope.selectedOperations.splice(currentIndex, 1);
+			$scope.nscanned.series[0].data.splice(currentIndex, 1);
+			$scope.nscanned.categories.splice(currentIndex, 1);
 		}
 		else {
 			$scope.selectedOperations.push(operation);
+
+			var obj = StatsService.getDetailsParams($scope.selectedCollections[0], operation);
+			DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
+
+				// can't figure out how to do this aggregation server-side because we can't use $where with $match... 
+				// so for now, trying client-side
+
+				var nScannedForEachInstanceOfThisQuery = result.nScanned;
+				var total = 0;
+				for(var i in nScannedForEachInstanceOfThisQuery) {
+					total += nScannedForEachInstanceOfThisQuery[i];
+				}
+
+				$scope.nscanned.series[0].data.push(total);
+				$scope.nscanned.categories.push(obj.operation + ' - ' + obj.query);
+			});
 		}
 	};
 });
