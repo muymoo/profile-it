@@ -1,7 +1,9 @@
 var LineByLineReader = require('line-by-line');
 var q = require('q');
 
-var getZipCodesFromFile = function(absoluteFilePath) {
+var jsonFileReader = {};
+
+jsonFileReader.getZipCodesFromFile = function(absoluteFilePath) {
 	var zips = [];
 	var lineReader = new LineByLineReader(absoluteFilePath);
 	var deferred = q.defer();
@@ -24,3 +26,5 @@ var getZipCodesFromFile = function(absoluteFilePath) {
 
 	return deferred.promise;
 }
+
+exports = module.exports = jsonFileReader;

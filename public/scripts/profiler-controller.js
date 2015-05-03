@@ -7,7 +7,8 @@ profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', fun
 
     $scope.queries = {
         findWI: true,
-        findWIMultiple: false
+        findWIMultiple: false,
+        addMore: false
     }
 
 	$scope.profile = function() {

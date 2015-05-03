@@ -12,7 +12,7 @@ connection.setProfiling(2, function (err, doc) {
 
 var queryRunner = {};
 
-queryRunner.addToDatabase = function(items) {
+var addToDatabase = function(items) {
 	console.info('Adding ' + items.length + ' zip codes to database...');
 	
 	// Create a bunch of items
@@ -33,15 +33,20 @@ queryRunner.addToDatabase = function(items) {
 	});
 }
 
-queryRunner.findWIMultipleTimes = function() {
+var dropZipCodeCollections = function() {
+	connection.db.dropCollection('zips');
+	connection.db.dropCollection('zipwithindexes');
+}
+
+ var findWIMultipleTimes = function() {
 	var i = 0;
 	while(i < 10) {	
-		queryRunner.findWIInDatabase();
+		findWIInDatabase();
 		i++;
 	}
 }
 
-queryRunner.findWIInDatabase = function() {
+ var findWIInDatabase = function() {
 	zip.find({ state: 'WI' }, function(err, all){
         console.info('Found ' + all.length + ' items without an index.');
 	});
@@ -50,45 +55,47 @@ queryRunner.findWIInDatabase = function() {
 	});
 }
 
-queryRunner.addInitialZipCodes = function() {
-	jsonFileReader.getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/small.json')
+var addMoreZipCodes = function() {
+	console.info('Adding more zip codes...');
+	jsonFileReader.getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/zips-6000s.json')
 		.then(addToDatabase);
 }
 
-queryRunner.addMoreZipCodes = function() {
-	getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/zips-6000s.json')
-		.then(addToDatabase);
-}
-
-queryRunner.updateZipCodes = function() {
+var updateZipCodes = function() {
 
 }
 
-queryRunner.findARangeOfZipCodes = function() {
+var findARangeOfZipCodes = function() {
 
 }
 
-queryRunner.findZipCodesInLatLon = function() {
+var findZipCodesInLatLon = function() {
 
 }
 
-queryRunner.addUpPopulation = function() {
+var addUpPopulation = function() {
 	// Map reduce?
 }
 
 var allQueries = {
-	findWI: queryRunner.findWIInDatabase,
-	findWIMultiple: queryRunner.findWIMultipleTimes,
-	addMore: queryRunner.addMoreZipCodes
+	findWI: findWIInDatabase,
+	findWIMultiple: findWIMultipleTimes,
+	addMore: addMoreZipCodes
 }
 
 queryRunner.runQueries = function(queriesToRun) {
 	var query;
-
+	console.info('Running queries:', queriesToRun);
 	queriesToRun.forEach(function(queryToRun) {
 		query = allQueries[queryToRun];
 		query();
 	});
 };
+
+queryRunner.addInitialZipCodes = function() {
+	dropZipCodeCollections();
+	jsonFileReader.getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/small.json')
+		.then(addToDatabase);
+}
 
 exports = module.exports = queryRunner;
