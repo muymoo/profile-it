@@ -1,0 +1,38 @@
+<div class="row">
+	<div class="col-sm-3">
+		<div class="panel panel-default">
+  			<div class="panel-heading">
+    			<h3 class="panel-title">Collections to compare</h3>
+  			</div>
+ 			<div class="panel-body">
+				<div class="checkbox" ng-repeat="collection in allCollections">
+  					<label>
+			    		<input type="checkbox" ng-click="toggleCollection(collection)">{{collection}}
+			    	</label>
+				</div>  
+			</div>
+		</div>
+		<div class="panel panel-default">
+  			<div class="panel-heading">
+    			<h3 class="panel-title">Operations to compare</h3>
+  			</div>
+ 			<div class="panel-body">
+				<div class="checkbox" ng-repeat="operation in allOperations">
+  					<label>
+			    		<input type="checkbox" ng-click="toggleOperation(operation)">{{operation}}
+			    	</label>
+				</div>  
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-9">
+		<span us-spinner spinner-key="myspinner"></span>
+		<chart 
+			title="Number of Documents Scanned" 
+			y-axis-title="" 
+			series-and-categories="nscanned">
+		</chart>
+	</div>
+	</div>
+</div>

@@ -46,9 +46,21 @@ profilerApp.factory('StatsService', function($http, $q) {
 		return defer.promise;
 	};
 
+	var getAllOperations = function(collection) {
+		var defer = $q.defer();
+		get('/stats/operation/' + collection).then(function(results) {
+			var operations = [];
+			for(i in results) {
+				operations.push(makeCategoryString(results[i]._id));
+			}
+			defer.resolve(operations);
+		});
+		return defer.promise;
+	};
+
 	var topOperationsByTime = function(collection) {
 		var defer = $q.defer();
-		get('/stats/operation/' + collection + '?sortBy=avgMillis').then(function(result) {
+		get('/stats/operation/' + collection + '/top?sortBy=avgMillis').then(function(result) {
 			var categories = [];
 			var series = [{
 				name: 'Max Millis',
@@ -82,7 +94,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 
 	var topOperationsByCount = function(collection) {
 		var defer = $q.defer();
-		get('/stats/operation/' + collection + '?sortBy=count').then(function(result) {
+		get('/stats/operation/' + collection + '/top?sortBy=count').then(function(result) {
 			var categories = [];
 			var series = [{
 				name: 'Count',
@@ -160,6 +172,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,
 		getAllCollections: getAllCollections,
+		getAllOperations: getAllOperations,
 		operationsCountOverTime: operationsCountOverTime,
 		operationsMillisOverTime: operationsMillisOverTime
 	};

@@ -1,7 +1,6 @@
 profilerApp.controller('HomeController', function($scope, StatsService, usSpinnerService, $q, $state, $location) {
 
 	$scope.collections = [];
-	// $scope.selectedCollection = $scope.collections[0];
 
 	StatsService.getAllCollections().then(function(collections) {
 		$scope.collections = collections;

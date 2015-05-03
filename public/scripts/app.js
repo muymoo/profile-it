@@ -18,6 +18,11 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
       templateUrl: "views/details.html",
       controller: "DetailsController"
     })
+    .state('compare', {
+      url: '/compare',
+      templateUrl: 'views/comparison.html',
+      controller: 'ComparisonController'
+    })
     .state('profiler', {
       url: "/profiler",
       templateUrl: "views/profiler.html",

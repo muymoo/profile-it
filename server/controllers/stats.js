@@ -60,6 +60,31 @@ router.get('/operation/:collection_name', function(req, res, next) {
 
   var group = {
     $group: {
+      _id: {'op':'$op', 'query':'$query'}
+    }
+  };
+
+  systemProfile
+    .aggregate(
+      [
+        getMatchCollectionName(req), 
+        filterOutInsertObjects,
+        group
+      ]
+    )
+    .exec(function(err, result) {
+      if (err) {
+        console.error('ERROR',err);
+      }
+      res.send(result);
+    });
+
+});
+
+router.get('/operation/:collection_name/top', function(req, res, next) {
+
+  var group = {
+    $group: {
       _id: {'op':'$op', 'query':'$query'},
       maxMillis: { $max: '$millis' },
       avgMillis: { $avg: "$millis" },
