@@ -30,7 +30,8 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 	$scope.$watch('selectedOperations', function(newSelectedOperations) {
 
 		if(newSelectedOperations.length === 0) {
-			return; // do nothing when initialized to []
+			$scope.nscanned = {};
+			return;
 		}
 
 		console.log(newSelectedOperations);
@@ -40,9 +41,22 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 
 		DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
 
+			// can't figure out how to do this aggregation server-side becuase we can't use $where with $match... 
+			// so for now, trying client-side
+
+			var nScannedForEachInstanceOfThisQuery = result.nScanned;
+			var total = 0;
+			for(var i in nScannedForEachInstanceOfThisQuery) {
+				total += nScannedForEachInstanceOfThisQuery[i];
+			}
+			console.log(total);
+
 			$scope.nscanned = {
-				series: result.nScannedSeries,
-				categories: result.categories
+				series: [{
+					name: 'Number documents scanned in index',
+					data: [total]
+				}],
+				categories: obj.operation + ' - ' + obj.query
 			};
 
 		});

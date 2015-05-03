@@ -6,26 +6,11 @@ profilerApp.factory('DetailsService', function($http, $q) {
 			console.log('Details: ', result);
 
 			var categories = [];
-			var nScannedSeries = [{
-				name: 'Number documents scanned',
-				data: []
-			},{
-				name: 'Number documents scanned in index',
-				data: []
-			},{
-				name: 'Number documents returned',
-				data: []
-			}];
-
-			var responseLengthSeries = [{
-				name: 'Response Length',
-				data: []
-			}];
-
-			var queryTimeSeries = [{
-				name: 'Time to complete query',
-				data: []
-			}];
+			var nScanned = [];
+			var nScannedObjs = [];
+			var nReturned = [];
+			var responseLength = [];
+			var queryTime = [];
 
 			for(var index in result) {
 				var item = result[index];
@@ -33,11 +18,11 @@ profilerApp.factory('DetailsService', function($http, $q) {
 				var categoryString = item.ts;
 							
 				categories.push(categoryString);
-				nScannedSeries[0].data.push(item.nscannedObjects);
-				nScannedSeries[1].data.push(item.nscanned);
-				nScannedSeries[2].data.push(item.nreturned); // could also do ntoskip (also expensive?)  // ntoreturn --> shows if have limit (if 0 no limit)
-				responseLengthSeries[0].data.push(item.responseLength);
-				queryTimeSeries[0].data.push(item.millis);
+				nScanned.push(item.nscanned);
+				nScannedObjs.push(item.nscannedObjects);
+				nReturned.push(item.nreturned); // could also do ntoskip (also expensive?)  // ntoreturn --> shows if have limit (if 0 no limit)
+				responseLength.push(item.responseLength);
+				queryTime.push(item.millis);
 
 				// TODO scanAndOrder if can't use index to return order.. must resort
 
@@ -55,9 +40,11 @@ profilerApp.factory('DetailsService', function($http, $q) {
 
 			defer.resolve({
 				categories: categories, 
-				nScannedSeries: nScannedSeries, 
-				responseLengthSeries: responseLengthSeries, 
-				queryTimeSeries: queryTimeSeries
+				nScanned: nScanned, 
+				nScannedObjs: nScannedObjs, 
+				nReturned: nReturned, 
+				responseLength: responseLength, 
+				queryTime: queryTime
 			});
 		});
 		return defer.promise;
