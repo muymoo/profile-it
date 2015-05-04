@@ -10,9 +10,17 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 		series: [],
 		categories: []
 	};
+	$scope.nscannedObjs = {
+		series: [],
+		categories: []
+	};
 
 	var clearGraph = function() {
 		$scope.nscanned = {
+			series: [],
+			categories: []
+		};
+		$scope.nscannedObjs = {
 			series: [],
 			categories: []
 		};
@@ -71,43 +79,52 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 
 
 
-	$scope.$watch('selectedOperations', function(newSelectedOperations) {
+	$scope.$watch('selectedOperations', redrawGraph, true);
+
+	function redrawGraph(newSelectedOperations) {
 
 		clearGraph();
 
 		DetailsService.fetchAllDetails($scope.selectedCollections, $scope.selectedOperations).then(function(results) {
 			addResultsToGraph(results);
 		});
-
-	}, true);
+	};
 
 	function addResultsToGraph(results) {
 		var nscannedResults = results.nscannedResults;
-		var nscannedCollections = results.nscannedCollections;
+		var nscannedObjsResults = results.nscannedObjsResults;
+		var collections = results.collectionsResults;
 
-		console.log(nscannedResults);
-
-		for(var collection in nscannedCollections) {
-			$scope.nscanned.series.push({
-				name: collection,
-				data: []
-			});
+		for(var collection in collections) {
+			addSeries($scope.nscanned.series, collection);
+			addSeries($scope.nscannedObjs.series, collection);
 		}
 
-		for(var category in nscannedResults) {
-			for(var collection in nscannedResults[category]) {
-				var point = nscannedResults[category][collection];
+		addCategoriesAndPoints($scope.nscanned, nscannedResults);
+		addCategoriesAndPoints($scope.nscannedObjs, nscannedObjsResults);
+	};
 
-				for(var x in $scope.nscanned.series) {
-					if($scope.nscanned.series[x].name === collection) {
-						$scope.nscanned.series[x].data.push(point);
+	function addSeries(series, name) {
+		series.push({
+			name: name,
+			data: []
+		});
+	};
+
+	function addCategoriesAndPoints(graph, results) {
+		for(var category in results) {
+			for(var collection in results[category]) {
+				var point = results[category][collection];
+
+				for(var x in graph.series) {
+					if(graph.series[x].name === collection) {
+						graph.series[x].data.push(point);
 						break;
 					}
 				}
 			}
-			$scope.nscanned.categories.push(category);
+			graph.categories.push(category);
 		}
-	}
-
+	};
 
 });

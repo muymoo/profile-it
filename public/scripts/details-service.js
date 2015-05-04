@@ -56,7 +56,8 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 	var fetchAllDetails = function(collections, operations) {
 
 		var nscannedResults = {};
-		var nscannedCollections = {};
+		var nscannedObjsResults = {};
+		var collectionsResults = {};
 
 		var defer = $q.defer();
 		var promises = [];
@@ -69,28 +70,22 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 				
 				promises.push(fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
 
-					// can't figure out how to do this aggregation server-side because we can't use $where with $match... 
-					// so for now, trying client-side
-					var nScannedForEachInstanceOfThisQuery = result.nScanned;
-
-					var value;
-					if(result.nScanned.length <= 0) {
-						value = 0;
-					}
-					else {
-						var total = 0;
-						for(var i in nScannedForEachInstanceOfThisQuery) {
-							total += nScannedForEachInstanceOfThisQuery[i];
-						}
-						value = total;
-					}
-
 					result.query = JSON.parse(result.query); // hack to show query results not stringified
-					if(nscannedResults[StatsService.makeCategoryString(result)] === undefined) {
-						nscannedResults[StatsService.makeCategoryString(result)] = {};
+					var category = StatsService.makeCategoryString(result);
+
+					var totalNScanned = aggregate(result.nScanned);
+					if(nscannedResults[category] === undefined) {
+						nscannedResults[category] = {};
 					}
-					nscannedResults[StatsService.makeCategoryString(result)][result.collection] = value;
-					nscannedCollections[result.collection] = true;
+					nscannedResults[category][result.collection] = totalNScanned;
+
+					var totalNScannedObjs = aggregate(result.nScannedObjs);
+					if(nscannedObjsResults[category] === undefined) {
+						nscannedObjsResults[category] = {};
+					}
+					nscannedObjsResults[category][result.collection] = totalNScannedObjs;
+
+					collectionsResults[result.collection] = true;
 
 				}));
 			}
@@ -99,11 +94,29 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 		$q.all(promises).then(function() {
 			defer.resolve({
 				nscannedResults: nscannedResults,
-				nscannedCollections: nscannedCollections
+				nscannedObjsResults: nscannedObjsResults,
+				collectionsResults: collectionsResults
 			});
 		});
 
 		return defer.promise;
+	};
+
+	// can't figure out how to do this aggregation server-side because we can't use $where with $match... 
+	// so for now, trying client-side
+	function aggregate(instances) {
+		var value;
+		if(instances.length <= 0) {
+			value = 0;
+		}
+		else {
+			var total = 0;
+			for(var i in instances) {
+				total += instances[i];
+			}
+			value = total;
+		}
+		return value;
 	};
 
 	return {
