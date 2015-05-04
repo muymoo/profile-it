@@ -88,18 +88,34 @@ var findRangeOfZipCodes = function() {
 }
 
 var findZipCodesInLatLon = function() {
-
 }
 
 var addUpPopulation = function() {
 	// Map reduce?
 }
 
+var findAveragePopulationPerCity = function() {
+	zip.aggregate( [
+   		{ $group: { _id: { state: "$state", city: "$city" }, pop: { $sum: "$pop" } } },
+   		{ $group: { _id: "$_id.state", avgCityPop: { $avg: "$pop" } } }
+	], function(err, all) {
+		console.info('Found ' + all.length + ' states and their average population.');
+	});
+
+	zipWithIndex.aggregate( [
+   		{ $group: { _id: { state: "$state", city: "$city" }, pop: { $sum: "$pop" } } },
+   		{ $group: { _id: "$_id.state", avgCityPop: { $avg: "$pop" } } }
+	], function(err,all) {
+		console.info('Found ' + all.length + ' states (indexed) and their average population.');
+	});
+}
+
 var allQueries = {
 	findWI: findWIInDatabase,
 	findWIMultiple: findWIMultipleTimes,
 	findRange: findRangeOfZipCodes,
-	addMore: addMoreZipCodes
+	addMore: addMoreZipCodes,
+	findAverage: findAveragePopulationPerCity
 }
 
 queryRunner.runQueries = function(queriesToRun) {
