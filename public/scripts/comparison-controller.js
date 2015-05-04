@@ -10,21 +10,54 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 		series: [],
 		categories: []
 	};
-	$scope.nscannedResults = {};
-	$scope.nscannedCollections = {};
 
-	var reinitNscanned = function() {
+	var clearGraph = function() {
 		$scope.nscanned = {
 			series: [],
 			categories: []
 		};
 	};
 
+
+
 	StatsService.getAllCollections().then(function(collections) {
 		$scope.allCollections = collections;
 	});
 
-	var addOperationsFor = function(collection) {
+
+
+	$scope.toggleCollection = function(collection) {
+		toggleInList($scope.selectedCollections, collection);
+	};
+
+	$scope.toggleOperation = function(operation) {
+		toggleInList($scope.selectedOperations, operation);
+	};
+
+	function toggleInList(list, item) {
+		var currentIndex = list.indexOf(item);
+		if(currentIndex > -1) {
+			list.splice(currentIndex, 1);
+		}
+		else {
+			list.push(item);
+		}
+	}
+
+
+
+	$scope.$watch('selectedCollections', loadOperationsFresh, true);
+
+	function loadOperationsFresh(newSelectedCollections) {
+		// reinitialize lists of operations & start fresh (easiest thing)
+		$scope.allOperations = [];
+		$scope.selectedOperations = [];
+		for(var i in newSelectedCollections) {
+			addOperationsForCollection(newSelectedCollections[i]);
+		}
+	};
+
+	function addOperationsForCollection(collection) {
 		StatsService.getAllOperations(collection).then(function(newOperations) {
 			for(var i in newOperations) {
 				var newOp = newOperations[i];
@@ -34,42 +67,51 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 				}
 			}
 		});
-	}
-
-	$scope.toggleCollection = function(collection) {
-		var currentIndex = $scope.selectedCollections.indexOf(collection);
-		if(currentIndex > -1) {
-			$scope.selectedCollections.splice(currentIndex, 1);
-		}
-		else {
-			$scope.selectedCollections.push(collection);
-		}
 	};
 
-	$scope.$watch('selectedCollections', function(newSelectedCollections) {
 
-		// reinitialize allOperations & start fresh (easiest thing)
-		$scope.allOperations = [];
-		$scope.selectedOperations = [];
-		for(var i in newSelectedCollections) {
-			addOperationsFor(newSelectedCollections[i]);
-		}
+
+	$scope.$watch('selectedOperations', function(newSelectedOperations) {
+
+		clearGraph();
+
+		fetchAllDetails().then(function(results) {
+
+			var nscannedResults = results.nscannedResults;
+			var nscannedCollections = results.nscannedCollections;
+
+			console.log(nscannedResults);
+
+			for(var collection in nscannedCollections) {
+				$scope.nscanned.series.push({
+					name: collection,
+					data: []
+				});
+			}
+
+			for(var category in nscannedResults) {
+				for(var collection in nscannedResults[category]) {
+					var point = nscannedResults[category][collection];
+
+					for(var x in $scope.nscanned.series) {
+						if($scope.nscanned.series[x].name === collection) {
+							$scope.nscanned.series[x].data.push(point);
+							break;
+						}
+					}
+				}
+				$scope.nscanned.categories.push(category);
+			}
+			
+		});
 
 	}, true);
 
-	$scope.toggleOperation = function(operation) {
-		var currentIndex = $scope.selectedOperations.indexOf(operation);
-		if(currentIndex > -1) {
-			$scope.selectedOperations.splice(currentIndex, 1);
-		}
-		else {
-			$scope.selectedOperations.push(operation);
-		}
-	};
 
 	var fetchAllDetails = function() {
-		$scope.nscannedResults = {};
-		$scope.nscannedCollections = {};
+
+		var nscannedResults = {};
+		var nscannedCollections = {};
 
 		var defer = $q.defer();
 		var promises = [];
@@ -100,53 +142,25 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 					}
 
 					result.query = JSON.parse(result.query); // hack to show query results not stringified
-					if($scope.nscannedResults[StatsService.makeCategoryString(result)] === undefined) {
-						$scope.nscannedResults[StatsService.makeCategoryString(result)] = {};
+					if(nscannedResults[StatsService.makeCategoryString(result)] === undefined) {
+						nscannedResults[StatsService.makeCategoryString(result)] = {};
 					}
-					$scope.nscannedResults[StatsService.makeCategoryString(result)][result.collection] = value;
-					$scope.nscannedCollections[result.collection] = true;
+					nscannedResults[StatsService.makeCategoryString(result)][result.collection] = value;
+					nscannedCollections[result.collection] = true;
 
 				}));
 			}
 		}
 
 		$q.all(promises).then(function() {
-			defer.resolve();
+			defer.resolve({
+				nscannedResults: nscannedResults,
+				nscannedCollections: nscannedCollections
+			});
 		});
 
 		return defer.promise;
 	};
 
-	$scope.$watch('selectedOperations', function(newSelectedOperations) {
 
-		reinitNscanned();
-
-		fetchAllDetails().then(function() {
-
-			console.log($scope.nscannedResults);
-
-			for(var collection in $scope.nscannedCollections) {
-				$scope.nscanned.series.push({
-					name: collection,
-					data: []
-				});
-			}
-
-			for(var category in $scope.nscannedResults) {
-				for(var collection in $scope.nscannedResults[category]) {
-					var point = $scope.nscannedResults[category][collection];
-
-					for(var x in $scope.nscanned.series) {
-						if($scope.nscanned.series[x].name === collection) {
-							$scope.nscanned.series[x].data.push(point);
-							break;
-						}
-					}
-				}
-				$scope.nscanned.categories.push(category);
-			}
-			
-		});
-
-	}, true);
 });
