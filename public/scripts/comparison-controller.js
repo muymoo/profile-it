@@ -1,4 +1,4 @@
-profilerApp.controller('ComparisonController', function($scope, StatsService, DetailsService) {
+profilerApp.controller('ComparisonController', function($scope, StatsService, DetailsService, $q) {
 
 	$scope.allCollections = [];
 	$scope.selectedCollections = [];
@@ -10,6 +10,8 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 		series: [],
 		categories: []
 	};
+	$scope.nscannedResults = {};
+	$scope.nscannedCollections = {};
 
 	var reinitNscanned = function() {
 		$scope.nscanned = {
@@ -65,41 +67,86 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 		}
 	};
 
-	$scope.$watch('selectedOperations', function(newSelectedOperations) {
+	var fetchAllDetails = function() {
+		$scope.nscannedResults = {};
+		$scope.nscannedCollections = {};
 
-		reinitNscanned();
-
+		var defer = $q.defer();
+		var promises = [];
 		for(var i in $scope.selectedCollections) {
-			for(var j in newSelectedOperations) {
+			for(var j in $scope.selectedOperations) {
 				var collection = $scope.selectedCollections[i];
-				var operation = newSelectedOperations[j];
+				var operation = $scope.selectedOperations[j];
 
 				var obj = StatsService.getDetailsParams(collection, operation);			
-				DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
+				
+
+				promises.push(DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
 
 					// can't figure out how to do this aggregation server-side because we can't use $where with $match... 
 					// so for now, trying client-side
 					var nScannedForEachInstanceOfThisQuery = result.nScanned;
 
-					if(result.nScanned.length > 0) {
-						// if there is actually a result, graph it
-
+					var value;
+					if(result.nScanned.length <= 0) {
+						value = 0;
+					}
+					else {
 						var total = 0;
 						for(var i in nScannedForEachInstanceOfThisQuery) {
 							total += nScannedForEachInstanceOfThisQuery[i];
 						}
-
-						$scope.nscanned.series.push({
-							name: result.collection,
-							data: [total]
-						});
-						$scope.nscanned.categories.push(StatsService.makeCategoryString(result));
+						value = total;
 					}
 
-				});
+					result.query = JSON.parse(result.query); // hack to show query results not stringified
+					if($scope.nscannedResults[StatsService.makeCategoryString(result)] === undefined) {
+						$scope.nscannedResults[StatsService.makeCategoryString(result)] = {};
+					}
+					$scope.nscannedResults[StatsService.makeCategoryString(result)][result.collection] = value;
+					$scope.nscannedCollections[result.collection] = true;
 
+				}));
 			}
 		}
+
+		$q.all(promises).then(function() {
+			defer.resolve();
+		});
+
+		return defer.promise;
+	};
+
+	$scope.$watch('selectedOperations', function(newSelectedOperations) {
+
+		reinitNscanned();
+
+		fetchAllDetails().then(function() {
+
+			console.log($scope.nscannedResults);
+
+			for(var collection in $scope.nscannedCollections) {
+				$scope.nscanned.series.push({
+					name: collection,
+					data: []
+				});
+			}
+
+			for(var category in $scope.nscannedResults) {
+				for(var collection in $scope.nscannedResults[category]) {
+					var point = $scope.nscannedResults[category][collection];
+
+					for(var x in $scope.nscanned.series) {
+						if($scope.nscanned.series[x].name === collection) {
+							$scope.nscanned.series[x].data.push(point);
+							break;
+						}
+					}
+				}
+				$scope.nscanned.categories.push(category);
+			}
+			
+		});
 
 	}, true);
 });
