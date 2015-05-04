@@ -1,11 +1,17 @@
 profilerApp.factory('StatsService', function($http, $q) {
 
-	var splitCharacter = ' - '; // use this to split the operation from the query object for user readability
+	var splitCharacter = ' - '; // use this to split the operation from the query/command object for user readability
 
 	function makeCategoryString(obj) {
 		var categoryString = obj.op;
 		if(obj.query !== undefined && obj.query !== 'HIDE-INSERT-OBJ') { // hide insert objects since they're each unique
 			categoryString += splitCharacter + JSON.stringify(obj.query);
+		}
+		if(obj.command !== undefined) {
+			categoryString += splitCharacter + JSON.stringify(obj.command);
+		}
+		if(obj.obj !== undefined) {
+			categoryString += splitCharacter + JSON.stringify(obj.obj);
 		}
 		return categoryString;
 	}
@@ -20,7 +26,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 		};
 
 		if(operationAndQuery.length > 1) {
-			params['query'] = operationAndQuery[1];
+			params['obj'] = operationAndQuery[1];
 		}
 
 		return params;

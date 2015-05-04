@@ -1,8 +1,8 @@
 profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 
-	var fetchDetails = function(collection, operation, query) {
+	var fetchDetails = function(collection, operation, obj) {
 		var defer = $q.defer();
-		$http.post('/stats/collection/' + collection + '/operation', {operation: operation, query: query}).success(function(result) {
+		$http.post('/stats/collection/' + collection + '/operation', {operation: operation, obj: obj}).success(function(result) {
 			console.log('Details: ', result);
 
 			var categories = [];
@@ -41,7 +41,7 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 			defer.resolve({
 				collection: collection,
 				op: operation,
-				query: query,
+				obj: obj,
 				categories: categories, 
 				nScanned: nScanned, 
 				nScannedObjs: nScannedObjs, 
@@ -68,9 +68,9 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 
 				var obj = StatsService.getDetailsParams(collection, operation);			
 				
-				promises.push(fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
+				promises.push(fetchDetails(obj.collection, obj.operation, obj.obj).then(function(result) {
 
-					result.query = JSON.parse(result.query); // hack to show query results not stringified
+					result.obj = JSON.parse(result.obj); // hack to show query/command results not stringified
 					var category = StatsService.makeCategoryString(result);
 
 					var totalNScanned = aggregate(result.nScanned);

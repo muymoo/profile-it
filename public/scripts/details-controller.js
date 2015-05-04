@@ -2,9 +2,9 @@ profilerApp.controller('DetailsController', function($scope, $stateParams, Detai
 
 	$scope.collection = $stateParams.collection;
 	$scope.operation = $stateParams.operation;
-	$scope.query = $stateParams.query;
+	$scope.obj = $stateParams.obj;
 
-	DetailsService.fetchDetails($scope.collection, $scope.operation, $scope.query).then(function(result) {
+	DetailsService.fetchDetails($scope.collection, $scope.operation, $scope.obj).then(function(result) {
 
 		var nScannedSeries = [{
 			name: 'Number documents scanned',

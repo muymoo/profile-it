@@ -14,7 +14,7 @@ profilerApp.config(function($stateProvider, $urlRouterProvider) {
         url: "?collection"
     })
     .state('details', {
-      url: "/details?collection&operation&query",
+      url: "/details?collection&operation&obj",
       templateUrl: "views/details.html",
       controller: "DetailsController"
     })

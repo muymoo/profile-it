@@ -26,8 +26,13 @@ var filterOutInsertObjects = {
     ts: 1,
     query: {
       $cond: { if: { $eq: [ '$op', 'insert' ] }, then: 'HIDE-INSERT-OBJ', else: '$query' } // group all insert query objects together
-    }
+    },
+    command: 1
   }
+};
+
+var limitTo50 = {
+  $limit: 50
 };
 
 router.get('/collection', function(req, res, next) {
@@ -60,7 +65,7 @@ router.get('/operation/:collection_name', function(req, res, next) {
 
   var group = {
     $group: {
-      _id: {'op':'$op', 'query':'$query'}
+      _id: {'op':'$op', 'query':'$query', 'command':'$command'}
     }
   };
 
@@ -85,7 +90,7 @@ router.get('/operation/:collection_name/top', function(req, res, next) {
 
   var group = {
     $group: {
-      _id: {'op':'$op', 'query':'$query'},
+      _id: {'op':'$op', 'query':'$query', 'command':'$command'},
       maxMillis: { $max: '$millis' },
       avgMillis: { $avg: "$millis" },
       minMillis: { $min: "$millis" },
@@ -96,17 +101,13 @@ router.get('/operation/:collection_name/top', function(req, res, next) {
   var sort = {};
   sort['$sort'] = {};
   sort['$sort'][req.query.sortBy] = -1;
-
-  var limit = {
-    $limit: 50
-  };
   
   var systemProfileQuery = [
     getMatchCollectionName(req),
     filterOutInsertObjects,
     group,
     sort,
-    limit
+    limitTo50
   ];
 
   systemProfile.aggregate(systemProfileQuery)
@@ -125,6 +126,7 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
       _id: {
         op : '$op',
         query: '$query',
+        command:'$command',
         year : { $year : "$ts" },        
         month : { $month : "$ts" },        
         day : { $dayOfMonth : "$ts" },
@@ -152,7 +154,8 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
     getMatchCollectionName(req),
     filterOutInsertObjects,
     groupIntoDays,
-    sortByDate
+    sortByDate,
+    limitTo50
   ];
 
   systemProfile
@@ -169,15 +172,20 @@ router.get('/operation/:collection_name/recent', function(req, res, next) {
 router.post('/collection/:collection_name/operation', function(req, res, next) {
 
   var operation = req.body.operation;
-  var query = req.body.query;
+  var obj = req.body.obj;
 
   var systemProfileQuery = {
     ns: req.params.collection_name,
     op: operation
   };
 
-  if(query) {
-    systemProfileQuery['$where'] = 'tojson(this.query) === tojson(' + query + ')';
+  if(obj) {
+    if(operation === 'command') {
+      systemProfileQuery['$where'] = 'tojson(this.command) === tojson(' + obj + ')';
+    }
+    else {
+      systemProfileQuery['$where'] = 'tojson(this.query) === tojson(' + obj + ')';
+    }
   }
 
   console.log("Sys Profile Query: ", systemProfileQuery);
