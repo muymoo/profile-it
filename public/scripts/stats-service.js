@@ -168,6 +168,7 @@ profilerApp.factory('StatsService', function($http, $q) {
 	}
 
 	return {
+		makeCategoryString: makeCategoryString,
 		getDetailsParams: getDetailsParams,
 		topOperationsByTime: topOperationsByTime,
 		topOperationsByCount: topOperationsByCount,

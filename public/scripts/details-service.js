@@ -40,7 +40,7 @@ profilerApp.factory('DetailsService', function($http, $q) {
 
 			defer.resolve({
 				collection: collection,
-				operation: operation,
+				op: operation,
 				query: query,
 				categories: categories, 
 				nScanned: nScanned, 
