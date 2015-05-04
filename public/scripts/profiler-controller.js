@@ -10,7 +10,8 @@ profilerApp.controller('ProfilerController', ['$scope', '$http', '$timeout', fun
         findWIMultiple: false,
         addMore: false,
         findRange: false,
-        findAverage: false
+        findAverage: false,
+        findNear: false
     }
 
 	$scope.profile = function() {

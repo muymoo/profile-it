@@ -3,7 +3,13 @@ var mongoose = require('mongoose');
 var ZipSchemaWithIndex = mongoose.Schema({ 
 	_id: String, 
 	city: String,
-	loc: [],
+	loc: { 
+		type: [Number], 
+		index: { 
+			type: '2dsphere', 
+			sparse: true 
+		}
+	},
 	pop: Number,
 	state: String });
 

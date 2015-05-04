@@ -87,7 +87,19 @@ var findRangeOfZipCodes = function() {
 	);
 }
 
-var findZipCodesInLatLon = function() {
+var findZipCodesNearUIUC = function() {
+	// Can only run on the indexed collection because GEO quereis require a 2dsphere index.
+	zipWithIndex.geoNear(
+		[-88.203631, 40.109522],
+		{ 
+			maxDistance : 0.002, 
+			spherical : true 
+		}, 
+		function(err, all, stats) {
+			console.info('Found ' + all.length + ' zip codes near UIUC.');
+			console.info('Zip Codes near UIUC:', all);
+		}
+	);
 }
 
 var addUpPopulation = function() {
@@ -115,7 +127,8 @@ var allQueries = {
 	findWIMultiple: findWIMultipleTimes,
 	findRange: findRangeOfZipCodes,
 	addMore: addMoreZipCodes,
-	findAverage: findAveragePopulationPerCity
+	findAverage: findAveragePopulationPerCity,
+	findNear: findZipCodesNearUIUC
 }
 
 queryRunner.runQueries = function(queriesToRun) {

@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var ZipSchema = mongoose.Schema({
 	_id: String, 
 	city: String,
-	loc: [],
+	loc: { 
+		type: [Number]
+	},
 	pop: Number,
 	state: String });
 
