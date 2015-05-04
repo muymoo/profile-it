@@ -75,92 +75,39 @@ profilerApp.controller('ComparisonController', function($scope, StatsService, De
 
 		clearGraph();
 
-		fetchAllDetails().then(function(results) {
-
-			var nscannedResults = results.nscannedResults;
-			var nscannedCollections = results.nscannedCollections;
-
-			console.log(nscannedResults);
-
-			for(var collection in nscannedCollections) {
-				$scope.nscanned.series.push({
-					name: collection,
-					data: []
-				});
-			}
-
-			for(var category in nscannedResults) {
-				for(var collection in nscannedResults[category]) {
-					var point = nscannedResults[category][collection];
-
-					for(var x in $scope.nscanned.series) {
-						if($scope.nscanned.series[x].name === collection) {
-							$scope.nscanned.series[x].data.push(point);
-							break;
-						}
-					}
-				}
-				$scope.nscanned.categories.push(category);
-			}
-			
+		DetailsService.fetchAllDetails($scope.selectedCollections, $scope.selectedOperations).then(function(results) {
+			addResultsToGraph(results);
 		});
 
 	}, true);
 
+	function addResultsToGraph(results) {
+		var nscannedResults = results.nscannedResults;
+		var nscannedCollections = results.nscannedCollections;
 
-	var fetchAllDetails = function() {
+		console.log(nscannedResults);
 
-		var nscannedResults = {};
-		var nscannedCollections = {};
-
-		var defer = $q.defer();
-		var promises = [];
-		for(var i in $scope.selectedCollections) {
-			for(var j in $scope.selectedOperations) {
-				var collection = $scope.selectedCollections[i];
-				var operation = $scope.selectedOperations[j];
-
-				var obj = StatsService.getDetailsParams(collection, operation);			
-				
-
-				promises.push(DetailsService.fetchDetails(obj.collection, obj.operation, obj.query).then(function(result) {
-
-					// can't figure out how to do this aggregation server-side because we can't use $where with $match... 
-					// so for now, trying client-side
-					var nScannedForEachInstanceOfThisQuery = result.nScanned;
-
-					var value;
-					if(result.nScanned.length <= 0) {
-						value = 0;
-					}
-					else {
-						var total = 0;
-						for(var i in nScannedForEachInstanceOfThisQuery) {
-							total += nScannedForEachInstanceOfThisQuery[i];
-						}
-						value = total;
-					}
-
-					result.query = JSON.parse(result.query); // hack to show query results not stringified
-					if(nscannedResults[StatsService.makeCategoryString(result)] === undefined) {
-						nscannedResults[StatsService.makeCategoryString(result)] = {};
-					}
-					nscannedResults[StatsService.makeCategoryString(result)][result.collection] = value;
-					nscannedCollections[result.collection] = true;
-
-				}));
-			}
+		for(var collection in nscannedCollections) {
+			$scope.nscanned.series.push({
+				name: collection,
+				data: []
+			});
 		}
 
-		$q.all(promises).then(function() {
-			defer.resolve({
-				nscannedResults: nscannedResults,
-				nscannedCollections: nscannedCollections
-			});
-		});
+		for(var category in nscannedResults) {
+			for(var collection in nscannedResults[category]) {
+				var point = nscannedResults[category][collection];
 
-		return defer.promise;
-	};
+				for(var x in $scope.nscanned.series) {
+					if($scope.nscanned.series[x].name === collection) {
+						$scope.nscanned.series[x].data.push(point);
+						break;
+					}
+				}
+			}
+			$scope.nscanned.categories.push(category);
+		}
+	}
 
 
 });
