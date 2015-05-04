@@ -3,6 +3,7 @@ require('../models/zipwithindex');
 require('../models/zip');
 var jsonFileReader = require('./json-file-reader');
 var mongoose = require('mongoose');
+var path = require('path');
 var zipWithIndex = mongoose.model('ZipWithIndex');
 var zip = mongoose.model('Zip');
 var connection = mongoose.connection;
@@ -57,7 +58,7 @@ var dropZipCodeCollections = function() {
 
 var addMoreZipCodes = function() {
 	console.info('Adding more zip codes...');
-	jsonFileReader.getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/zips-6000s.json')
+	jsonFileReader.getZipCodesFromFile(path.resolve('server/data/zips-6000s.json'))
 		.then(addToDatabase);
 }
 
@@ -142,7 +143,7 @@ queryRunner.runQueries = function(queriesToRun) {
 
 queryRunner.addInitialZipCodes = function() {
 	dropZipCodeCollections();
-	jsonFileReader.getZipCodesFromFile('/Users/204054399/development/uiuc/profile-it/server/data/small.json')
+	jsonFileReader.getZipCodesFromFile(path.resolve('server/data/small.json'))
 		.then(addToDatabase);
 }
 
