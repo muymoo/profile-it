@@ -58,7 +58,7 @@ var dropZipCodeCollections = function() {
 
 var addMoreZipCodes = function() {
 	console.info('Adding more zip codes...');
-	jsonFileReader.getZipCodesFromFile(path.resolve('server/data/zips-5000s.json'))
+	jsonFileReader.getZipCodesFromFile(path.resolve('server/data/zips-0000s.json'))
 		.then(addToDatabase);
 }
 
