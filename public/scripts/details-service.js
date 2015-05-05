@@ -114,7 +114,7 @@ profilerApp.factory('DetailsService', function($http, $q, StatsService) {
 			for(var i in instances) {
 				total += instances[i];
 			}
-			value = total;
+			value = total/instances.length;
 		}
 		return value;
 	};
